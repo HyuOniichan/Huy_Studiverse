@@ -6,7 +6,7 @@ import Logo from '../Home/Logo/Logo'
 import Visibility from '../Icons/Visibility'
 import VisibilityOff from '../Icons/VisibilityOff'
 
-const Register = () => {
+const Login = () => {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -15,6 +15,46 @@ const Register = () => {
     // toggle password visibility 
     function toggleShowPass() {
         setShowPass(prev => !prev);
+    }
+
+    function handleLogin() {
+        setEmail(prev => prev.trim()); 
+        if (!email) {
+            console.log('Where your email?'); 
+            return; 
+        }
+        if (!password) {
+            console.log('Where your password?'); 
+            return; 
+        }
+
+        const authenUser = {
+            email, 
+            password,
+        }
+
+        fetch(`${process.env.NEXT_PUBLIC_BACKEND_LINK}/auth/login`, {
+            method: 'POST',
+            body: JSON.stringify(authenUser),
+            headers: { "Content-Type": "application/json" },
+            credentials: 'include'
+        })
+            .then(res => {
+                if (!res.ok) {
+                    if (res.status === 400) {
+                        return res.json().then(errorData => {
+                            throw new Error(errorData.message || `Re-check your information?`);
+                        })
+                    }
+                    throw new Error('An error occured');
+                }
+                return res.json();
+            })
+            .then(data => {
+                console.log(data);
+            })
+            .catch(err => console.log(err))
+
     }
 
     return (
@@ -70,9 +110,13 @@ const Register = () => {
                                     </div>
                                     <a href="#" className="text-sm font-medium text-blue-600 hover:underline dark:text-blue-500">Forgot password?</a>
                                 </div> */}
-                                <button type="button" className="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Log in</button>
+                                <button 
+                                    type="button" 
+                                    className="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                                    onClick={handleLogin}
+                                >Log in</button>
                                 <p className="text-sm font-light text-gray-500 dark:text-gray-400">
-                                    Don't have an account? <Link href="/account/register" className="font-medium text-blue-600 hover:underline dark:text-blue-500">Sign up</Link>
+                                    Don't have an account? <Link href="/account/Login" className="font-medium text-blue-600 hover:underline dark:text-blue-500">Sign up</Link>
                                 </p>
                             </form>
                         </div>
@@ -83,4 +127,4 @@ const Register = () => {
     )
 }
 
-export default Register
+export default Login

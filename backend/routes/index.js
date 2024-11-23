@@ -3,9 +3,11 @@ const { authenticate, userRole, authRole } = require('../middlewares/authenticat
 
 function route(app) {
 
-    app.use(`/auth`, authRoute);
+    const prefix = `/api/v1`
 
-    app.use(`/admin`, authenticate, authRole(userRole.admin), (req, res) => {
+    app.use(`${prefix}/auth`, authRoute);
+
+    app.use(`${prefix}/admin`, authenticate, authRole(userRole.admin), (req, res) => {
         console.log(req.body)
         res.send('Admin page')
     })
