@@ -13,8 +13,14 @@ class authController {
         userData.find({ $or: [{ username: username }, { email: email }] })
             .then(data => {
                 if (data && data.length) {
-                    if (data[0].username == username) res.status(409).send('This username was used')
-                    else res.status(409).send('This email was used')
+                    if (data[0].username == username) res.status(409).json({
+                        error: 'username_taken',
+                        message: `This username is already taken`
+                    })
+                    else res.status(409).json({
+                        error: 'email_taken',
+                        message: `This email is already used`
+                    })
                 } else {
                     bcrypt.hash(password, 10)
                         .then(hashPass => {
@@ -29,16 +35,25 @@ class authController {
                                 created_courses: [],
                             }
                             userData.create(newUser)
-                                .then(createdUser => res.send(createdUser))
+                                .then(createdUser => res.status(201).json(createdUser))
                                 .catch(err => {
                                     console.log(err)
-                                    res.status(400).send('An error occured')
+                                    res.status(400).json({
+                                        error: 'error',
+                                        message: 'An error occured'
+                                    })
                                 })
                         })
-                        .catch(() => res.status(400).send('Invalid password'))
+                        .catch(() => res.status(400).json({
+                            error: 'wrong_password',
+                            message: 'Invalid password'
+                        }))
                 }
             })
-            .catch(() => res.status(400).send('Cannot check the email'))
+            .catch(() => res.status(400).json({
+                error: 'error_email',
+                message: 'Cannot check the email'
+            }))
     }
 
     // [POST] /auth/login
@@ -46,9 +61,15 @@ class authController {
         userData.findOne({ email: req.body.email })
             .then(result => {
                 bcrypt.compare(req.body.password, result.password, (err, check) => {
-                    if (err) return res.status(400).send("An error occured")
+                    if (err) return res.status(400).json({
+                        error: 'error',
+                        message: 'An error occured'
+                    })
                     if (!check) {
-                        return res.status(400).send("Invalid password")
+                        return res.status(400).json({
+                            error: 'wrong_password',
+                            message: 'Invalid password'
+                        })
                     }
                     const { password, ...user } = result.toJSON();
                     const accessToken = jwt.sign(
@@ -60,16 +81,23 @@ class authController {
                         httpOnly: true,
                         maxAge: 24 * 60 * 60 * 1000
                     })
-                    return res.send('Success')
+                    return res.status(201).json({
+                        message: 'Success'
+                    })
                 })
             })
-            .catch(() => res.status(404).send("User not found"))
+            .catch(() => res.status(404).json({
+                error: 'user_not_found', 
+                message: 'User not found'
+            }))
     }
 
     // [POST] /auth/logout
     logout(req, res) {
         res.cookie('jwt', '', { maxAge: 0 })
-        res.send('Logged out')
+        res.json({
+            message: 'Logged out'
+        })
     }
 
 }
