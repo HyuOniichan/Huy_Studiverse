@@ -2,10 +2,6 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const userData = require('../models/userModel');
 
-
-// BUG: CAN'T HANDLE CHECK DUPLICATE USERNAME/ EMAIL
-
-
 class authController {
     // [POST] /auth/register
     register(req, res) {
