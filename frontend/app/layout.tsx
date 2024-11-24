@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import ResponsiveNav from "@/components/Navbar/ResponsiveNav";
 import Footer from "@/components/Footer/Footer";
+import { ToastProvider } from "@/components/Toast/ToastContext";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -27,12 +28,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <ResponsiveNav /> 
-        {children}
-        <Footer />
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <ToastProvider>
+          <ResponsiveNav />
+          {children}
+          <Footer />
+        </ToastProvider>
       </body>
     </html>
   );
