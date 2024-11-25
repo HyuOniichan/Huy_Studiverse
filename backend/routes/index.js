@@ -9,7 +9,7 @@ function route(app) {
 
     app.use(`${prefix}/auth`, authRoute);
     app.use(`${prefix}/course`, courseRoute);
-    app.use(`${prefix}`, userRoute);
+    app.use(`${prefix}/user`, userRoute);
 
     // test authen
     app.use(`${prefix}/admin`, authenticate, authRole(userRole.admin), (req, res) => {
