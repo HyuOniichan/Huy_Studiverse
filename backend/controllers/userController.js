@@ -3,7 +3,7 @@ const userData = require('../models/userModel');
 class userController {
     // [GET] /user
     index(req, res) {
-        userData.findById(req.body.userId)
+        if (req.body && req.body.userId) userData.findById(req.body.userId)
             .then(data => {
                 if (data === null) throw new Error();
                 const { password, ...currentUser } = data.toObject();

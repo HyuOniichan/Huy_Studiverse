@@ -21,7 +21,7 @@ export const AccountProvider: React.FC<{ children: ReactNode }> = ({ children })
     const toast = useToastContext();
 
     useEffect(() => {
-        fetch(`${process.env.NEXT_PUBLIC_BACKEND_LINK}`, {
+        fetch(`${process.env.NEXT_PUBLIC_BACKEND_LINK}/user`, {
             method: 'GET',
             credentials: 'include'
         })
