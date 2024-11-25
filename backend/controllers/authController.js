@@ -31,9 +31,11 @@ class authController {
                                 created_courses: [],
                             }
                             userData.create(newUser)
-                                .then(createdUser => res.status(201).json(createdUser))
-                                .catch(err => {
-                                    console.log(err)
+                                .then(() => {
+                                    const { password, ...createdUser } = newUser;
+                                    res.status(201).json(createdUser); 
+                                })
+                                .catch(() => {
                                     res.status(400).json({
                                         error: 'error',
                                         message: 'An error occured'
@@ -77,13 +79,11 @@ class authController {
                         httpOnly: true,
                         maxAge: 24 * 60 * 60 * 1000
                     })
-                    return res.status(201).json({
-                        message: 'Success'
-                    })
+                    return res.status(201).json(user);
                 })
             })
             .catch(() => res.status(404).json({
-                error: 'user_not_found', 
+                error: 'user_not_found',
                 message: 'User not found'
             }))
     }

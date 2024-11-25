@@ -4,6 +4,7 @@ import "./globals.css";
 import ResponsiveNav from "@/components/Navbar/ResponsiveNav";
 import Footer from "@/components/Footer/Footer";
 import { ToastProvider } from "@/components/Toast/ToastContext";
+import { AccountProvider } from "@/components/Account/AccountContext";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -30,9 +31,11 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <ToastProvider>
-          <ResponsiveNav />
-          {children}
-          <Footer />
+          <AccountProvider>
+            <ResponsiveNav />
+            {children}
+            <Footer />
+          </AccountProvider>
         </ToastProvider>
       </body>
     </html>
