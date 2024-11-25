@@ -4,8 +4,14 @@ import React, { createContext, ReactNode, useContext, useEffect, useState } from
 import { useToastContext } from '../Toast/ToastContext';
 
 type AccountType = {
-    userId: string;
+    _id: string;
     role: string;
+    about: string;
+    avatar: string;
+    username: string;
+    email: string;
+    created_courses: string[];
+    enrolled_courses: string[];
 }
 
 interface AccountContextType {
@@ -34,15 +40,13 @@ export const AccountProvider: React.FC<{ children: ReactNode }> = ({ children })
                 return res.json();
             })
             .then(data => {
-                const { userId, role } = data;
-                updateUser({ userId, role });
+                updateUser(data);
             })
             .catch(err => console.log(err));
     }, [])
 
     const updateUser = (user: AccountType | null) => {
         setCurrentUser(user)
-        if (user !== null) toast.addToast('success', 'Welcome bro!');
     }
 
     return (

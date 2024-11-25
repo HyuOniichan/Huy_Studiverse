@@ -77,9 +77,7 @@ class authController {
                         httpOnly: true,
                         maxAge: 24 * 60 * 60 * 1000
                     })
-                    return res.status(201).json({
-                        message: 'Success'
-                    })
+                    return res.status(201).json(user); 
                 })
             })
             .catch(() => res.status(404).json({

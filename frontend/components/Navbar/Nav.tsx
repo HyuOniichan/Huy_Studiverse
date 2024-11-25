@@ -1,6 +1,7 @@
 'use client'
 
 import { navLinks } from '@/constant/constant'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import React, { useState } from 'react'
 import Logo from '../Home/Logo/Logo'
@@ -10,10 +11,10 @@ import { useToastContext } from '../Toast/ToastContext'
 
 const Nav = () => {
 
+    const router = useRouter(); 
     const currentPath = 'home';
     const { currentUser, updateUser } = useAccountContext();
     const { addToast } = useToastContext();
-
     const [menu, setMenu] = useState(false);
 
     const toggleMenu = () => setMenu(prev => !prev);
@@ -33,7 +34,11 @@ const Nav = () => {
                 }
                 return res.json();
             })
-            .then(() => addToast('success', 'See ya ~~'))
+            .then(() => {
+                setMenu(false); 
+                addToast('success', 'See ya ~~');
+                router.push('/');
+            })
             .catch(() => addToast('error', 'An error occured'))
     }
 
