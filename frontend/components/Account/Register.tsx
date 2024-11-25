@@ -5,6 +5,8 @@ import Link from 'next/link'
 import Logo from '../Home/Logo/Logo'
 import Visibility from '../Icons/Visibility'
 import VisibilityOff from '../Icons/VisibilityOff'
+import { useRouter } from 'next/navigation'
+import { useToastContext } from '../Toast/ToastContext'
 
 const Register = () => {
 
@@ -13,6 +15,8 @@ const Register = () => {
     const [password, setPassword] = useState('');
     const [showPass, setShowPass] = useState(false);
     const [role, setRole] = useState('student');
+    const router = useRouter();
+    const { addToast } = useToastContext();
 
     const usernameMaxLen = 30;
     const usernameMinLen = 3;
@@ -69,8 +73,9 @@ const Register = () => {
                 }
                 return res.json();
             })
-            .then(data => {
-                console.log(data);
+            .then(() => {
+                addToast('success', 'Registered successfully, please login with your new account', 10000); 
+                router.push('/account/login')
             })
             .catch(err => console.log(err))
 
