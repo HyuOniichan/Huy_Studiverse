@@ -46,7 +46,7 @@ const Nav = () => {
         <div className='fixed w-full transition-all duration-200 h-[9vh] z-[1000]'>
 
             <nav className="bg-white border-gray-200 dark:bg-gray-900">
-                <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+                <div className="max-w flex flex-wrap items-center justify-between mx-4 p-4">
                     <Link href="/" className="flex items-center space-x-3 rtl:space-x-reverse">
                         <Logo />
                     </Link>
@@ -72,12 +72,12 @@ const Nav = () => {
                                     onClick={toggleMenu}
                                 >
                                     <span className="sr-only">Open user menu</span>
-                                    <img className="w-10 h-10 rounded-full" src="https://avatars.githubusercontent.com/u/119403471" alt="user avatar" />
+                                    <img className="w-10 h-10 rounded-full" src={currentUser.avatar} alt="user avatar" />
                                 </button>
-                                <div className={`${!menu && 'hidden'} z-50 absolute top-8 end-0 my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600`}>
+                                <div className={`${!menu && 'hidden'} min-w-40 z-50 absolute top-8 end-0 my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600`}>
                                     <div className="px-4 py-3">
-                                        <span className="block text-sm text-gray-900 dark:text-white">HyuOniichan</span>
-                                        <span className="block text-sm  text-gray-500 truncate dark:text-gray-400">hyuhyu@gmail.com</span>
+                                        <span className="block text-sm text-gray-900 dark:text-white">{currentUser.username}</span>
+                                        <span className="block text-sm  text-gray-500 truncate dark:text-gray-400">{currentUser.email}</span>
                                     </div>
                                     <ul className="py-2" aria-labelledby="user-menu-button">
                                         <li>
