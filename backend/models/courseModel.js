@@ -5,6 +5,7 @@ const courseModel = new mongoose.Schema({
     description: String,
     price: String,
     thumbnail: String,
+    tags: [String], 
     lessons: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Lesson' }]
 }, {
     timestamps: true
