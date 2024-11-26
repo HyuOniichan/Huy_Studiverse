@@ -1,3 +1,8 @@
+import Course from "@/components/Icons/Course"
+import Dashboard from "@/components/Icons/Dashboard"
+import Products from "@/components/Icons/Products"
+import Users from "@/components/Icons/Users"
+
 export const navLinks = [
     {
         id: 1,
@@ -19,4 +24,43 @@ export const navLinks = [
         url: '/blogs',
         label: 'blogs'
     },
+    {
+        id: 5,
+        url: '/dashboard',
+        label: 'dashboard'
+    },
+]
+
+// prefix - /dashboard /...
+export const sidebarLinks = [
+    {
+        role: ['admin', 'teacher', 'student'],
+        url: '/', 
+        label: 'Dashboard', 
+        icon: Dashboard
+    }, 
+    {
+        role: ['admin'], 
+        url: '/users', 
+        label: 'Users', 
+        icon: Users
+    }, 
+    {
+        role: ['admin'], 
+        url: '/courses', 
+        label: 'Courses', 
+        icon: Course
+    }, 
+    {
+        role: ['teacher'], 
+        url: '/courses/managed', 
+        label: 'Courses', 
+        icon: Course
+    }, 
+    {
+        role: ['students'], 
+        url: '/courses/enrolled', 
+        label: 'Courses', 
+        icon: Course
+    }, 
 ]
