@@ -4,7 +4,7 @@ const lessonData = require('../models/lessonModel')
 class courseController {
     // [GET] /course
     show(req, res) {
-        courseData.find({})
+        courseData.find({}).populate('lessons')
             .then(data => res.status(200).json(data))
             .catch(() => res.status(400).json({
                 error: 'courses_not_found',
