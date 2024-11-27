@@ -35,32 +35,32 @@ export const navLinks = [
 export const sidebarLinks = [
     {
         role: ['admin', 'teacher', 'student'],
-        url: '/', 
+        url: '/dashboard', 
         label: 'Dashboard', 
         icon: Dashboard
     }, 
     {
         role: ['admin'], 
-        url: '/users', 
+        url: '/dashboard/users', 
         label: 'Users', 
         icon: Users
     }, 
     {
         role: ['admin'], 
-        url: '/courses', 
-        label: 'Courses', 
+        url: '/dashboard/courses', 
+        label: 'All Courses', 
         icon: Course
     }, 
     {
         role: ['teacher'], 
-        url: '/courses/managed', 
-        label: 'Courses', 
+        url: '/dashboard/courses/managed', 
+        label: 'Managed Courses', 
         icon: Course
     }, 
     {
-        role: ['students'], 
-        url: '/courses/enrolled', 
-        label: 'Courses', 
+        role: ['teacher', 'student'], 
+        url: '/dashboard/courses/enrolled', 
+        label: 'Enrolled Courses', 
         icon: Course
     }, 
 ]
