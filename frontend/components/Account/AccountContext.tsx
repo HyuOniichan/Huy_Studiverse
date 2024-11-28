@@ -3,6 +3,18 @@
 import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react'
 import { useToastContext } from '../Toast/ToastContext';
 
+type CourseType = {
+    title: string;
+    description: string;
+    price: string;
+    thumbnail: string;
+    tags: string[];
+    lessons: string[];
+    creator: string;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
 type AccountType = {
     _id: string;
     role: string;
@@ -10,8 +22,8 @@ type AccountType = {
     avatar: string;
     username: string;
     email: string;
-    created_courses: string[];
-    enrolled_courses: string[];
+    created_courses: CourseType[];
+    enrolled_courses: CourseType[];
 }
 
 interface AccountContextType {
