@@ -13,8 +13,8 @@ type UserType = {
     avatar: string;
     username: string;
     email: string;
-    created_courses: string[];
-    enrolled_courses: string[];
+    created_courses: CourseType[];
+    enrolled_courses: CourseType[];
 }
 
 type CourseType = {
@@ -42,24 +42,26 @@ const Content = () => {
         else addToast('error', 'Cannot display current view');
 
         // fetch data based on the path
-        fetch(`${process.env.NEXT_PUBLIC_BACKEND_LINK}${currentView?.api}`, {
-            method: 'GET',
-            credentials: 'include'
-        })
-            .then(res => {
-                if (!res.ok) {
-                    return res.json().then(errorData => {
-                        throw new Error(errorData.message || 'An error occured');
-                    }).catch(err => {
-                        if (currentView?.api) addToast('error', err.message);
-                    });
-                }
-                return res.json();
+        if (currentView?.api) {
+            fetch(`${process.env.NEXT_PUBLIC_BACKEND_LINK}${currentView.api}`, {
+                method: 'GET',
+                credentials: 'include'
             })
-            .then(data => setCurrentData(data))
-            .catch(err => {
-                if (currentView?.api) addToast('error', err.message);
-            })
+                .then(res => {
+                    if (!res.ok) {
+                        return res.json().then(errorData => {
+                            throw new Error(errorData.message || 'An error occured');
+                        }).catch(err => {
+                            addToast('error', err.message);
+                        });
+                    }
+                    return res.json();
+                })
+                .then(data => setCurrentData(data))
+                .catch(err => {
+                    addToast('error', err.message);
+                })
+        }
 
     }, [])
 
@@ -114,7 +116,7 @@ const Content = () => {
                                 </div>
                             </div>
                             <div className="flex items-center ml-auto space-x-2 sm:space-x-3">
-                                <Link href="/account/register" type="button" className="inline-flex items-center justify-center w-1/2 px-3 py-2 text-sm font-medium text-center text-white rounded-lg bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 sm:w-auto dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                                <Link href="/courses" type="button" className="inline-flex items-center justify-center w-1/2 px-3 py-2 text-sm font-medium text-center text-white rounded-lg bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 sm:w-auto dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                                     <svg className="w-5 h-5 mr-1 -ml-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd"></path></svg>
                                     Add {path.split(' ').slice(-1)}
                                 </Link>
