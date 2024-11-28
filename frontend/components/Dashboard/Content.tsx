@@ -24,7 +24,7 @@ type CourseType = {
     thumbnail: string;
     tags: string[];
     lessons: string[];
-    creator: string;
+    creator: UserType;
     createdAt: Date;
     updatedAt: Date;
 }
