@@ -16,8 +16,7 @@ class courseController {
     showOne(req, res) {
         courseData.findById(req.params.id).populate('lessons').populate('creator')
             .then(data => res.status(200).json(data))
-            .catch(err => {
-                console.error('Error populating lessons:', err);
+            .catch(() => {
                 res.status(400).json({
                     error: 'course_not_found',
                     message: 'Cannot find the requested course'

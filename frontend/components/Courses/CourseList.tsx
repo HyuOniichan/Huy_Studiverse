@@ -4,15 +4,28 @@ import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import { useToastContext } from '../Toast/ToastContext'
 
+type UserType = {
+    _id: string;
+    role: string;
+    about: string;
+    avatar: string;
+    username: string;
+    email: string;
+    created_courses: CourseType[];
+    enrolled_courses: CourseType[];
+}
+
 type CourseType = {
-    _id: string; 
+    _id: string, 
     title: string;
     description: string;
-    price: string; 
-    thumbnail: string; 
-    lessons: string[]; 
-    createdAt: string; 
-    updatedAt: string; 
+    price: string;
+    thumbnail: string;
+    tags: string[];
+    lessons: string[];
+    creator: UserType;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 const CourseList = () => {
