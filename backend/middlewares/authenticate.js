@@ -20,9 +20,9 @@ function authenticate(req, res, next) {
             message: 'Data not found'
         }); 
         req.body = data; 
+        next();
     })
 
-    next();
 }
 
 function authRole(role) {
