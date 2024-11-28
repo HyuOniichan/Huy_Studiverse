@@ -4,7 +4,7 @@ const lessonData = require('../models/lessonModel')
 class courseController {
     // [GET] /course
     show(req, res) {
-        courseData.find({}).populate('lessons')
+        courseData.find({}).populate('lessons').populate('creator')
             .then(data => res.status(200).json(data))
             .catch(() => res.status(400).json({
                 error: 'courses_not_found',
@@ -14,7 +14,7 @@ class courseController {
 
     // [GET] /course/:id
     showOne(req, res) {
-        courseData.findById(req.params.id).populate('lessons')
+        courseData.findById(req.params.id).populate('lessons').populate('creator')
             .then(data => res.status(200).json(data))
             .catch(err => {
                 console.error('Error populating lessons:', err);
