@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react'
 
 import { RenderReviewStars } from '../Icons/Star'
 import { useToastContext } from '../Toast/ToastContext'
+import Link from 'next/link'
 
 type UserType = {
     _id: string;
@@ -23,8 +24,19 @@ type CourseType = {
     price: string;
     thumbnail: string;
     tags: string[];
-    lessons: string[];
+    lessons: LessonType[];
     creator: UserType;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+type LessonType = {
+    title: string;
+    description: string;
+    video_url: string;
+    content: string;
+    course: CourseType;
+    order: number;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -37,7 +49,7 @@ const CourseDetail = () => {
     // Update later
     const rate = 3;
     const studentNumber = 1625;
-    
+
     // get current path to fetch data
     useEffect(() => {
         const url = window.location.pathname.split('/');
@@ -119,6 +131,56 @@ const CourseDetail = () => {
                             <img src={course && course.thumbnail} alt="course_thumbnail" className="mx-auto object-cover object-center" />
                         </div>
                     </div>
+                </div>
+            </section>
+
+            <section>
+                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                    <h2 className="mb-2 ml-2 font-manrope font-bold text-3xl leading-10 text-gray-900">
+                        Lessons
+                    </h2>
+                    <table className="min-w-full divide-y divide-gray-200 table-fixed dark:divide-gray-600">
+                        <thead className="bg-gray-100 dark:bg-gray-700">
+                            <tr>
+                                <th scope="col" className="p-4">
+                                    Order
+                                </th>
+                                <th scope="col" className="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">
+                                    Name
+                                </th>
+                                <th scope="col" className="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">
+                                    Actions
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
+                            {course?.lessons.map((data, index) => (
+                                <tr className="hover:bg-gray-100 dark:hover:bg-gray-700" key={index}>
+                                    <td className="w-4 p-4 text-center">
+                                        {data.order}
+                                    </td>
+                                    <td className="flex items-center p-4 mr-12 space-x-6 whitespace-nowrap">
+                                        <div className="text-sm font-normal text-gray-500 dark:text-gray-400">
+                                            <div className="text-base font-semibold text-gray-900 dark:text-white">
+                                                {data.title}
+                                            </div>
+                                            <div className="text-sm font-normal text-gray-500 dark:text-gray-400">
+                                                {data.description.slice(0, 50) + '...'}
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td className="p-4 space-x-2 whitespace-nowrap">
+                                        <Link href={`/courses/${course._id}/lesson/${data.order}`} className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white rounded-lg bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                                            <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"></path><path fillRule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clipRule="evenodd"></path>
+                                            </svg>
+                                            Learn
+                                        </Link>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
                 </div>
             </section>
 
