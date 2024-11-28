@@ -21,7 +21,7 @@ type CourseType = {
     thumbnail: string;
     tags: string[];
     lessons: string[];
-    creator: string;
+    creator: UserType;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -36,6 +36,8 @@ const ContentTable = ({ path, currentData }: ContentTableProps) => {
     const { currentUser } = useAccountContext();
     const requestedCourses = (path === 'enrolled courses') ? 
         currentUser?.enrolled_courses : (currentUser?.role === 'teacher' && currentUser?.created_courses); 
+
+    console.log(requestedCourses)
 
     return (<>
 
@@ -91,7 +93,7 @@ const ContentTable = ({ path, currentData }: ContentTableProps) => {
                                 </div>
                             </td>
                             <td className="p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white capitalize">
-                                {path === 'users' ? (data as UserType).role : (data as CourseType).creator}
+                                {path === 'users' ? (data as UserType).role : (data as CourseType).creator.username}
                             </td>
                             <td className="p-4 text-base font-normal text-gray-900 whitespace-nowrap dark:text-white">
                                 <div className="flex items-center">
@@ -171,7 +173,7 @@ const ContentTable = ({ path, currentData }: ContentTableProps) => {
                                 </div>
                             </td>
                             <td className="p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white capitalize">
-                                {data.creator}
+                                {data.creator && data.creator.username}
                             </td>
                             <td className="p-4 text-base font-normal text-gray-900 whitespace-nowrap dark:text-white">
                                 <div className="flex items-center">

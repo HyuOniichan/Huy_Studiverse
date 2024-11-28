@@ -10,7 +10,7 @@ type CourseType = {
     thumbnail: string;
     tags: string[];
     lessons: string[];
-    creator: string;
+    creator: AccountType;
     createdAt: Date;
     updatedAt: Date;
 }
