@@ -1,72 +1,9 @@
-'use client'
-
-import React, { useEffect, useState } from 'react'
-import { sidebarLinks } from '@/constant/constant'
-import { useToastContext } from '../Toast/ToastContext'
-import ContentTable from './ContentTable'
 import Link from 'next/link'
+import React from 'react'
 
-type UserType = {
-    _id: string;
-    role: string;
-    about: string;
-    avatar: string;
-    username: string;
-    email: string;
-    created_courses: CourseType[];
-    enrolled_courses: CourseType[];
-}
-
-type CourseType = {
-    title: string;
-    description: string;
-    price: string;
-    thumbnail: string;
-    tags: string[];
-    lessons: string[];
-    creator: UserType;
-    createdAt: Date;
-    updatedAt: Date;
-}
-
-const Content = () => {
-
-    const { addToast } = useToastContext();
-    const [currentData, setCurrentData] = useState<(UserType | CourseType)[] | undefined>(undefined);
-    const [path, setPath] = useState<string>('');
-
-    useEffect(() => {
-        // get the path 
-        const currentView = sidebarLinks.find(e => e.url === window.location.pathname);
-        if (currentView) setPath(currentView.label.toLowerCase());
-        else addToast('error', 'Cannot display current view');
-
-        // fetch data based on the path
-        if (currentView?.api) {
-            fetch(`${process.env.NEXT_PUBLIC_BACKEND_LINK}${currentView.api}`, {
-                method: 'GET',
-                credentials: 'include'
-            })
-                .then(res => {
-                    if (!res.ok) {
-                        return res.json().then(errorData => {
-                            throw new Error(errorData.message || 'An error occured');
-                        }).catch(err => {
-                            addToast('error', err.message);
-                        });
-                    }
-                    return res.json();
-                })
-                .then(data => setCurrentData(data))
-                .catch(err => {
-                    addToast('error', err.message);
-                })
-        }
-
-    }, [])
-
+const CourseCreate = () => {
     return (
-        <div className="p-4 sm:ml-64">
+        <div className="p-4 pt-24">
             <div className="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
 
                 <div className="p-4 bg-white block sm:flex items-center justify-between border-b border-gray-200 lg:mt-1.5 dark:bg-gray-800 dark:border-gray-700">
@@ -83,13 +20,19 @@ const Content = () => {
                                     <li>
                                         <div className="flex items-center">
                                             <svg className="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd"></path></svg>
-                                            <span className="ml-1 text-gray-400 md:ml-2 dark:text-gray-500 capitalize" aria-current="page">{path}</span>
+                                            <span className="ml-1 text-gray-400 md:ml-2 dark:text-gray-500 capitalize" aria-current="page">All courses</span>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div className="flex items-center">
+                                            <svg className="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd"></path></svg>
+                                            <span className="ml-1 text-gray-400 md:ml-2 dark:text-gray-500 capitalize" aria-current="page">Create course</span>
                                         </div>
                                     </li>
                                 </ol>
                             </nav>
                             <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white capitalize">
-                                {path}
+                                Create new course
                             </h1>
                         </div>
                         <div className="sm:flex">
@@ -116,9 +59,9 @@ const Content = () => {
                                 </div>
                             </div>
                             <div className="flex items-center ml-auto space-x-2 sm:space-x-3">
-                                <Link href={`/dashboard/${path.split(' ').slice(-1)}/create`} type="button" className="inline-flex items-center justify-center w-1/2 px-3 py-2 text-sm font-medium text-center text-white rounded-lg bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 sm:w-auto dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                                    <svg className="w-5 h-5 mr-1 -ml-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd"></path></svg>
-                                    Add {path.split(' ').slice(-1)}
+                                <Link href={`/dashboard/courses`} type="button" className="inline-flex items-center justify-center w-1/2 px-3 py-2 text-sm font-medium text-center text-white rounded-lg bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 sm:w-auto dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">
+                                    <svg className="w-5 h-5 mr-1 -ml-1 rotate-45" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd"></path></svg>
+                                    Cancel
                                 </Link>
                                 <button
                                     type="button"
@@ -147,15 +90,44 @@ const Content = () => {
                     </div>
                 </div>
 
-                {/* Table of data */}
-                <div className="flex flex-col">
-                    <div className="overflow-x-auto">
-                        <div className="inline-block min-w-full align-middle">
-                            <div className="overflow-hidden shadow">
-                                <ContentTable path={path} currentData={currentData} />
-                            </div>
+                {/* CREATE FORM */}
+                <div className="mt-4">
+                    <form className="max-w ml-8">
+                        <div className="mb-5">
+                            <label htmlFor="title" className="block mb-2 text-lg font-medium text-gray-900 dark:text-white">Title</label>
+                            <input type="text" id="title" 
+                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
+                                placeholder="Pick a unique name" required 
+                            />
                         </div>
-                    </div>
+                        <div className="mb-5">
+                            <label htmlFor="message" className="block mb-2 text-lg font-medium text-gray-900 dark:text-white">Description</label>
+                            <textarea id="message" rows={4} className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
+                                placeholder="What's special?"></textarea>
+                        </div>
+                        <div className="mb-5">
+                            <label htmlFor="price" className="block mb-2 text-lg font-medium text-gray-900 dark:text-white">Price</label>
+                            <input type="text" id="price" 
+                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
+                                placeholder="0 if free" required 
+                            />
+                        </div>
+                        <div className="mb-5">
+                            <label htmlFor="thumbnail" className="block mb-2 text-lg font-medium text-gray-900 dark:text-white">Thumbnail</label>
+                            <input type="text" id="thumbnail" 
+                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
+                                placeholder="Should be a nice image to show off!" required 
+                            />
+                        </div>
+                        <div className="mb-5">
+                            <label htmlFor="tags" className="block mb-2 text-lg font-medium text-gray-900 dark:text-white">Tags</label>
+                            <input type="text" id="tags" 
+                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
+                                placeholder="Seperated, by, commas" required 
+                            />
+                        </div>
+                        <button type="button" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Submit</button>
+                    </form>
                 </div>
 
             </div>
@@ -163,4 +135,4 @@ const Content = () => {
     )
 }
 
-export default Content
+export default CourseCreate
