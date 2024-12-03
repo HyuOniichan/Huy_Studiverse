@@ -1,7 +1,85 @@
+'use client'
+
 import Link from 'next/link'
-import React from 'react'
+import React, { useState, useEffect } from 'react'
+import { sidebarLinks } from '@/constant/constant'
+import Breadcrumb from '../Breadcrumb/Breadcrumb'
+import { useAccountContext } from '../Account/AccountContext'
+import { useToastContext } from '../Toast/ToastContext'
 
 const CourseCreate = () => {
+
+    const { currentUser } = useAccountContext();
+    const { addToast } = useToastContext();
+
+    // get the path to render breadcrumb
+    const [path, setPath] = useState<string>('');
+
+    useEffect(() => {
+        const currentView = sidebarLinks.find(e => e.url === window.location.pathname);
+        if (currentView) setPath(currentView.label.toLowerCase());
+    })
+
+    const breadcrumbPaths = [
+        {
+            label: path || 'Courses',
+            url: '/dashboard/courses'
+        },
+        {
+            label: 'Create course',
+            url: '/dashboard/courses/create'
+        },
+    ]
+
+    const [title, setTitle] = useState<string>('');
+    const [desc, setDesc] = useState<string>('');
+    const [price, setPrice] = useState<string>('');
+    const [thumbnail, setThumbnail] = useState<string>('');
+    const [tags, setTags] = useState<string>('');
+
+    // send request to create new course
+    function handleSubmit() {
+
+        if (!currentUser || !['teacher', 'admin'].includes(currentUser.role)) {
+            addToast('error', 'You are not allowed to create new course');
+            return;
+        }
+
+        const tagsArr = tags.trim().split(',').map(tag => tag.trim()).filter(e => e);
+        const newCourse = {
+            title,
+            description: desc,
+            price,
+            thumbnail,
+            tags: tagsArr,
+            creator: currentUser?._id,
+            lessons: []
+        }
+
+        fetch(`${process.env.NEXT_PUBLIC_BACKEND_LINK}/course/store`, {
+            method: 'POST', 
+            body: JSON.stringify(newCourse), 
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include'
+        })
+            .then(res => {
+                if (!res.ok) {
+                    return res.json().then(errorData => {
+                        throw new Error(errorData.message || 'An error occured');
+                    }).catch(err => {
+                        const errMessage = err instanceof Error ? err.message : 'An error occured';
+                        addToast('error', errMessage);
+                    })
+                }
+                addToast('success', 'Your course created');
+                return res.json();
+            })
+            .catch(err => {
+                const errMessage = err instanceof Error ? err.message : 'An error occured';
+                addToast('error', errMessage);
+            })
+    }
+
     return (
         <div className="p-4 pt-24">
             <div className="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
@@ -9,28 +87,7 @@ const CourseCreate = () => {
                 <div className="p-4 bg-white block sm:flex items-center justify-between border-b border-gray-200 lg:mt-1.5 dark:bg-gray-800 dark:border-gray-700">
                     <div className="w-full mb-1">
                         <div className="mb-4">
-                            <nav className="flex mb-5" aria-label="Breadcrumb">
-                                <ol className="inline-flex items-center space-x-1 text-sm font-medium md:space-x-2">
-                                    <li className="inline-flex items-center">
-                                        <Link href="/" className="inline-flex items-center text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-white">
-                                            <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path></svg>
-                                            Home
-                                        </Link>
-                                    </li>
-                                    <li>
-                                        <div className="flex items-center">
-                                            <svg className="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd"></path></svg>
-                                            <span className="ml-1 text-gray-400 md:ml-2 dark:text-gray-500 capitalize" aria-current="page">All courses</span>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div className="flex items-center">
-                                            <svg className="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd"></path></svg>
-                                            <span className="ml-1 text-gray-400 md:ml-2 dark:text-gray-500 capitalize" aria-current="page">Create course</span>
-                                        </div>
-                                    </li>
-                                </ol>
-                            </nav>
+                            <Breadcrumb paths={breadcrumbPaths} />
                             <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white capitalize">
                                 Create new course
                             </h1>
@@ -95,38 +152,44 @@ const CourseCreate = () => {
                     <form className="max-w ml-8">
                         <div className="mb-5">
                             <label htmlFor="title" className="block mb-2 text-lg font-medium text-gray-900 dark:text-white">Title</label>
-                            <input type="text" id="title" 
-                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
-                                placeholder="Pick a unique name" required 
+                            <input value={title} onChange={e => setTitle(e.target.value)} type="text" id="title"
+                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                placeholder="Pick a unique name" required
                             />
                         </div>
                         <div className="mb-5">
-                            <label htmlFor="message" className="block mb-2 text-lg font-medium text-gray-900 dark:text-white">Description</label>
-                            <textarea id="message" rows={4} className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
+                            <label htmlFor="description" className="block mb-2 text-lg font-medium text-gray-900 dark:text-white">Description</label>
+                            <textarea value={desc} onChange={e => setDesc(e.target.value)} id="description" rows={4} className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 placeholder="What's special?"></textarea>
                         </div>
                         <div className="mb-5">
                             <label htmlFor="price" className="block mb-2 text-lg font-medium text-gray-900 dark:text-white">Price</label>
-                            <input type="text" id="price" 
-                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
-                                placeholder="0 if free" required 
+                            <input value={price} onChange={e => setPrice(e.target.value)} type="text" id="price"
+                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                placeholder="skip if your course is free" required
                             />
                         </div>
                         <div className="mb-5">
                             <label htmlFor="thumbnail" className="block mb-2 text-lg font-medium text-gray-900 dark:text-white">Thumbnail</label>
-                            <input type="text" id="thumbnail" 
-                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
-                                placeholder="Should be a nice image to show off!" required 
+                            <input value={thumbnail} onChange={e => setThumbnail(e.target.value)} type="text" id="thumbnail"
+                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                placeholder="Should be a nice image to show off!" required
                             />
                         </div>
                         <div className="mb-5">
                             <label htmlFor="tags" className="block mb-2 text-lg font-medium text-gray-900 dark:text-white">Tags</label>
-                            <input type="text" id="tags" 
-                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
-                                placeholder="Seperated, by, commas" required 
+                            <input value={tags} onChange={e => setTags(e.target.value)} type="text" id="tags"
+                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                placeholder="Seperated, by, commas" required
                             />
                         </div>
-                        <button type="button" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Submit</button>
+                        <button 
+                            type="button" 
+                            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                            onClick={handleSubmit}
+                        >
+                            Submit
+                        </button>
                     </form>
                 </div>
 

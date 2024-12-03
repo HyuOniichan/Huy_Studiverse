@@ -19,15 +19,17 @@ function authenticate(req, res, next) {
             error: 'not_found', 
             message: 'Data not found'
         }); 
-        req.body = data; 
+        req.body = {
+            ...req.body, 
+            ...data
+        }
         next();
     })
-
 }
 
 function authRole(role) {
     return (req, res, next) => {
-        if (req.body.role !== role) res.status(403).json({
+        if (!role.includes(req.body.role)) res.status(403).json({
             error: 'unauthenticated', 
             message: 'You do not have access'
         }); 
