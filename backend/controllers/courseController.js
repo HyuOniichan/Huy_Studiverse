@@ -27,6 +27,7 @@ class courseController {
     // [POST] /course/store
     store(req, res) {
         const { title, creator, lessons, description, price, thumbnail, tags } = req.body;
+        const thumbnailPlacehoder = '/images/placeholder_image.png'
 
         if (!title || !creator) {
             return res.status(400).json({
@@ -39,7 +40,7 @@ class courseController {
             title,
             description: description || 'No description', 
             price: price || 'Free', 
-            thumbnail: thumbnail || '', 
+            thumbnail: thumbnail || thumbnailPlacehoder, 
             tags: tags || [], 
             creator,
             lessons: lessons || []
@@ -47,7 +48,7 @@ class courseController {
 
         courseData.create(newCourse)
             .then(data => res.status(201).json(data))
-            .catch(() => {
+            .catch(err => {
                 res.status(500).json({
                     error: 'course_not_created',
                     message: 'An error occurred while creating the course'
