@@ -5,6 +5,7 @@ import { sidebarLinks } from '@/constant/constant'
 import { useToastContext } from '../Toast/ToastContext'
 import ContentTable from './ContentTable'
 import Link from 'next/link'
+import Breadcrumb from '../Breadcrumb/Breadcrumb'
 
 type UserType = {
     _id: string;
@@ -72,7 +73,7 @@ const Content = () => {
                 <div className="p-4 bg-white block sm:flex items-center justify-between border-b border-gray-200 lg:mt-1.5 dark:bg-gray-800 dark:border-gray-700">
                     <div className="w-full mb-1">
                         <div className="mb-4">
-                            <nav className="flex mb-5" aria-label="Breadcrumb">
+                            {/* <nav className="flex mb-5" aria-label="Breadcrumb">
                                 <ol className="inline-flex items-center space-x-1 text-sm font-medium md:space-x-2">
                                     <li className="inline-flex items-center">
                                         <Link href="/" className="inline-flex items-center text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-white">
@@ -87,7 +88,8 @@ const Content = () => {
                                         </div>
                                     </li>
                                 </ol>
-                            </nav>
+                            </nav> */}
+                            <Breadcrumb paths={[{ label: path, url: '#' }]} />
                             <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white capitalize">
                                 {path}
                             </h1>
