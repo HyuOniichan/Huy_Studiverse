@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import ResponsiveNav from "@/components/Navbar/ResponsiveNav";
-import Footer from "@/components/Footer/Footer";
+import Nav from "@/components/base/Nav";
+import Footer from "@/components/base/Footer";
 import { ToastProvider } from "@/components/Toast/ToastContext";
 import { AccountProvider } from "@/components/Account/AccountContext";
 
@@ -32,7 +32,7 @@ export default function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <ToastProvider>
           <AccountProvider>
-            <ResponsiveNav />
+            <Nav />
             {children}
             <Footer />
           </AccountProvider>

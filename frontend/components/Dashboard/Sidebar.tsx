@@ -2,7 +2,7 @@
 
 import React, { useEffect } from 'react'
 import { useAccountContext } from '../Account/AccountContext'
-import { sidebarLinks } from '@/constant/constant'
+import { sidebarLinks } from '@/utils/constant'
 import Link from 'next/link'
 import { useToastContext } from '../Toast/ToastContext'
 

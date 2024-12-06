@@ -1,6 +1,6 @@
 'use client'
 
-import { navLinks } from '@/constant/constant'
+import { navLinks } from '@/utils/constant'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import React, { useState } from 'react'
