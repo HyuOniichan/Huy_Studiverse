@@ -6,29 +6,7 @@ import { useToastContext } from '../Toast/ToastContext'
 import ContentTable from './ContentTable'
 import Link from 'next/link'
 import Breadcrumb from '../base/Breadcrumb'
-
-type UserType = {
-    _id: string;
-    role: string;
-    about: string;
-    avatar: string;
-    username: string;
-    email: string;
-    created_courses: CourseType[];
-    enrolled_courses: CourseType[];
-}
-
-type CourseType = {
-    title: string;
-    description: string;
-    price: string;
-    thumbnail: string;
-    tags: string[];
-    lessons: string[];
-    creator: UserType;
-    createdAt: Date;
-    updatedAt: Date;
-}
+import { UserType, CourseType } from '@/types'
 
 const Content = () => {
 

@@ -5,42 +5,7 @@ import { useAccountContext } from '../Account/AccountContext';
 import Link from 'next/link';
 import { useToastContext } from '../Toast/ToastContext';
 import { redirect } from 'next/navigation';
-
-type UserType = {
-    _id: string;
-    role: string;
-    about: string;
-    avatar: string;
-    username: string;
-    email: string;
-    created_courses: CourseType[];
-    enrolled_courses: CourseType[];
-}
-
-type CourseType = {
-    _id: string,
-    title: string;
-    description: string;
-    price: string;
-    thumbnail: string;
-    tags: string[];
-    lessons: LessonType[];
-    creator: UserType;
-    createdAt: Date;
-    updatedAt: Date;
-}
-
-type LessonType = {
-    _id: string;
-    title: string;
-    description: string;
-    video_url: string;
-    content: string;
-    course: CourseType;
-    order: number;
-    createdAt: Date;
-    updatedAt: Date;
-}
+import { CourseType, LessonType } from '@/types';
 
 const LessonDetail = () => {
 

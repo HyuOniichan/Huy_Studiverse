@@ -2,42 +2,7 @@
 
 import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react'
 import { useToastContext } from '../Toast/ToastContext';
-
-type LessonType = {
-    _id: string;
-    title: string;
-    description: string;
-    video_url: string;
-    content: string;
-    course: CourseType;
-    order: number;
-    createdAt: Date;
-    updatedAt: Date;
-}
-
-type CourseType = {
-    _id: string;
-    title: string;
-    description: string;
-    price: string;
-    thumbnail: string;
-    tags: string[];
-    lessons: LessonType[];
-    creator: AccountType;
-    createdAt: Date;
-    updatedAt: Date;
-}
-
-type AccountType = {
-    _id: string;
-    role: string;
-    about: string;
-    avatar: string;
-    username: string;
-    email: string;
-    created_courses: CourseType[];
-    enrolled_courses: CourseType[];
-}
+import { UserType as AccountType } from '@/types';
 
 interface AccountContextType {
     currentUser: AccountType | null;
