@@ -2,29 +2,7 @@
 
 import React from 'react'
 import { useAccountContext } from '../Account/AccountContext';
-
-type UserType = {
-    _id: string;
-    role: string;
-    about: string;
-    avatar: string;
-    username: string;
-    email: string;
-    created_courses: CourseType[];
-    enrolled_courses: CourseType[];
-}
-
-type CourseType = {
-    title: string;
-    description: string;
-    price: string;
-    thumbnail: string;
-    tags: string[];
-    lessons: string[];
-    creator: UserType;
-    createdAt: Date;
-    updatedAt: Date;
-}
+import { UserType, CourseType } from '@/types';
 
 interface ContentTableProps {
     path: string;

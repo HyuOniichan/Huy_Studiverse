@@ -2,8 +2,8 @@
 
 import Link from 'next/link'
 import React, { useState, useEffect } from 'react'
-import { sidebarLinks } from '@/constant/constant'
-import Breadcrumb from '../Breadcrumb/Breadcrumb'
+import { sidebarLinks } from '@/utils/constant'
+import Breadcrumb from '../base/Breadcrumb'
 import { useAccountContext } from '../Account/AccountContext'
 import { useToastContext } from '../Toast/ToastContext'
 

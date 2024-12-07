@@ -1,45 +1,11 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
+import Link from 'next/link'
 
 import { RenderReviewStars } from '../Icons/Star'
 import { useToastContext } from '../Toast/ToastContext'
-import Link from 'next/link'
-
-type UserType = {
-    _id: string;
-    role: string;
-    about: string;
-    avatar: string;
-    username: string;
-    email: string;
-    created_courses: CourseType[];
-    enrolled_courses: CourseType[];
-}
-
-type CourseType = {
-    _id: string,
-    title: string;
-    description: string;
-    price: string;
-    thumbnail: string;
-    tags: string[];
-    lessons: LessonType[];
-    creator: UserType;
-    createdAt: Date;
-    updatedAt: Date;
-}
-
-type LessonType = {
-    title: string;
-    description: string;
-    video_url: string;
-    content: string;
-    course: CourseType;
-    order: number;
-    createdAt: Date;
-    updatedAt: Date;
-}
+import { CourseType } from '@/types'
 
 const CourseDetail = () => {
 
