@@ -5,7 +5,7 @@ import { useAccountContext } from '../Account/AccountContext';
 import { UserType, CourseType } from '@/types';
 
 interface ContentTableProps {
-    path: string;
+    path: string | undefined;
     currentData: (UserType | CourseType)[] | undefined;
 }
 
@@ -15,12 +15,12 @@ const ContentTable = ({ path, currentData }: ContentTableProps) => {
     const requestedCourses = (path === 'enrolled courses') ? 
         currentUser?.enrolled_courses : (currentUser?.role === 'teacher' && currentUser?.created_courses); 
 
-    console.log(requestedCourses)
+    console.log(currentUser)
 
     return (<>
 
         {/* ADMIN */}
-        {(currentUser?.role === 'admin' && (path === 'users' || path === 'all courses')) && (
+        {(currentUser?.role === 'admin') && (
             <table className="min-w-full divide-y divide-gray-200 table-fixed dark:divide-gray-600">
                 <thead className="bg-gray-100 dark:bg-gray-700">
                     <tr>
@@ -100,7 +100,7 @@ const ContentTable = ({ path, currentData }: ContentTableProps) => {
         )}
 
         {/* TEACHER & STUDENT */}
-        {(currentUser?.role === 'student' || currentUser?.role === 'teacher') && (path !== 'dashboard') && (
+        {(currentUser?.role === 'student' || currentUser?.role === 'teacher') && (
             <table className="min-w-full divide-y divide-gray-200 table-fixed dark:divide-gray-600">
                 <thead className="bg-gray-100 dark:bg-gray-700">
                     <tr>
