@@ -3,18 +3,21 @@
 import React, { useEffect, useState } from 'react'
 import { sidebarLinks } from '@/utils/constant'
 import { useToastContext } from '../Toast/ToastContext'
-import ContentTable from './ContentTable'
 import { UserType, CourseType } from '@/types'
 import { usePathname } from 'next/navigation'
 import useCustomPath from '@/hooks/useCustomPath'
+import { useAccountContext } from '../Account/AccountContext'
+import ContentAdmin from './ContentRole/ContentAdmin'
+import ContentTeacher from './ContentRole/ContentTeacher'
+import ContentStudent from './ContentRole/ContentStudent'
 
 const Content = () => {
 
     const currentUrl = usePathname();
     const { addToast } = useToastContext();
     const [currentData, setCurrentData] = useState<(UserType | CourseType)[] | undefined>(undefined);
-
-    const path = useCustomPath(); 
+    const { currentUser } = useAccountContext();
+    const path = useCustomPath();
 
     // fetch data based on the path
     useEffect(() => {
@@ -48,7 +51,9 @@ const Content = () => {
             <div className="overflow-x-auto">
                 <div className="inline-block min-w-full align-middle">
                     <div className="overflow-hidden shadow">
-                        <ContentTable path={path?.label} currentData={currentData} />
+                        {(currentUser?.role === 'admin') && <ContentAdmin currentData={currentData} />}
+                        {(currentUser?.role === 'teacher') && <ContentTeacher />}
+                        {(currentUser?.role === 'student') && <ContentStudent />}
                     </div>
                 </div>
             </div>
