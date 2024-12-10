@@ -2,9 +2,9 @@
 
 import React from 'react'
 
-import Content from '@/components/Dashboard/Content'
 import useCustomPath from '@/hooks/useCustomPath'
 import { useAccountContext } from '@/components/Account/AccountContext';
+import DashboardContent from '@/components/Dashboard/DashboardContent';
 
 const DashboardPage = () => {
 
@@ -14,7 +14,7 @@ const DashboardPage = () => {
 
     return (
         <>
-            {(allowedRoles && currentUser && allowedRoles.includes(currentUser?.role)) && <Content />}
+            {(allowedRoles && currentUser && allowedRoles.includes(currentUser?.role)) && <DashboardContent />}
         </>
     )
 }
