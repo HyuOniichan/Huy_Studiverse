@@ -1,11 +1,21 @@
+'use client'
+
 import React from 'react'
 
-import Dashboard from '@/components/Dashboard/Dashboard'
+import Content from '@/components/Dashboard/Content'
+import useCustomPath from '@/hooks/useCustomPath'
+import { useAccountContext } from '@/components/Account/AccountContext';
+import { usePathname } from 'next/navigation';
 
 const DashboardPage = () => {
+
+    const path = useCustomPath();
+    const allowedRoles = path?.role;
+    const { currentUser } = useAccountContext();
+
     return (
         <>
-            <Dashboard />
+            {(allowedRoles && currentUser && allowedRoles.includes(currentUser?.role)) && <Content />}
         </>
     )
 }

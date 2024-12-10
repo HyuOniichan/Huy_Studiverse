@@ -37,35 +37,35 @@ export const sidebarLinks = [
         role: ['admin', 'teacher', 'student'],
         url: '/dashboard', 
         api: '',
-        label: 'Dashboard', 
+        label: 'dashboard', 
         icon: Dashboard
     }, 
     {
         role: ['admin'], 
         url: '/dashboard/users', 
         api: '/user/all',
-        label: 'Users', 
+        label: 'users', 
         icon: Users
     }, 
     {
         role: ['admin'], 
         url: '/dashboard/courses', 
         api: '/course',
-        label: 'All Courses', 
+        label: 'all courses', 
         icon: Course
     }, 
     {
         role: ['teacher'], 
         url: '/dashboard/courses/managed', 
         api: '',
-        label: 'Managed Courses', 
+        label: 'managed courses', 
         icon: Course
     }, 
     {
         role: ['teacher', 'student'], 
         url: '/dashboard/courses/enrolled', 
         api: '',
-        label: 'Enrolled Courses', 
+        label: 'enrolled courses', 
         icon: Course
     }, 
 ]

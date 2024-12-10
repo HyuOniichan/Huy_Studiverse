@@ -2,7 +2,7 @@ import Link from 'next/link'
 import React from 'react'
 
 interface BreadcrumbProps {
-    paths: { label: string, url: string }[]
+    paths: { label: string | undefined, url: string | '' }[]
 }
 
 const Breadcrumb: React.FC<BreadcrumbProps> = ({ paths }) => {
