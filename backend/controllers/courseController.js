@@ -1,5 +1,6 @@
 const courseData = require('../models/courseModel')
 const lessonData = require('../models/lessonModel')
+const userData = require('../models/userModel')
 
 class courseController {
     // [GET] /course
@@ -38,17 +39,39 @@ class courseController {
 
         const newCourse = {
             title,
-            description: description || 'No description', 
-            price: price || 'Free', 
-            thumbnail: thumbnail || thumbnailPlacehoder, 
-            tags: tags || [], 
+            description: description || 'No description',
+            price: price || 'Free',
+            thumbnail: thumbnail || thumbnailPlacehoder,
+            tags: tags || [],
             creator,
             lessons: lessons || []
         }
 
+        // create new course & save new course to creator's created_courses field 
         courseData.create(newCourse)
-            .then(data => res.status(201).json(data))
+            .then(createdCourse => {
+                if (creator !== createdCourse.creator.toString()) 
+                    throw new Error('different creator id');
+                if (creator) {
+                    userData.findByIdAndUpdate(
+                        creator,
+                        { $push: { created_courses: createdCourse._id } }
+                    )
+                        .then(() => res.status(201).json(createdCourse))
+                        .catch(err => {
+                            console.log(err); 
+                            res.status(500).json({
+                                error: 'course_not_created',
+                                message: 'An error occurred while creating the course'
+                            });
+                        })
+                    
+                } else {
+                    throw new Error('creator not found'); 
+                }
+            })
             .catch(err => {
+                console.log(err)
                 res.status(500).json({
                     error: 'course_not_created',
                     message: 'An error occurred while creating the course'
