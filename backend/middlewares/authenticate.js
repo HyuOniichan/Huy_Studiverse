@@ -30,8 +30,8 @@ function authenticate(req, res, next) {
 function authRole(role) {
     return (req, res, next) => {
         if (!role.includes(req.body.role)) res.status(403).json({
-            error: 'unauthenticated', 
-            message: 'You do not have access'
+            error: 'forbidden', 
+            message: 'You are not allowed to do this'
         }); 
         next(); 
     }
