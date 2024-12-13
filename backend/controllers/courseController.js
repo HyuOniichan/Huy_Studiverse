@@ -50,7 +50,7 @@ class courseController {
         // create new course & save new course to creator's created_courses field 
         courseData.create(newCourse)
             .then(createdCourse => {
-                if (creator !== createdCourse.creator.toString()) 
+                if (creator !== createdCourse.creator.toString())
                     throw new Error('different creator id');
                 if (creator) {
                     userData.findByIdAndUpdate(
@@ -59,23 +59,48 @@ class courseController {
                     )
                         .then(() => res.status(201).json(createdCourse))
                         .catch(err => {
-                            console.log(err); 
+                            console.log(err);
                             res.status(500).json({
                                 error: 'course_not_created',
                                 message: 'An error occurred while creating the course'
                             });
                         })
-                    
+
                 } else {
-                    throw new Error('creator not found'); 
+                    throw new Error('creator not found');
                 }
             })
             .catch(err => {
-                console.log(err)
+                console.log(err);
                 res.status(500).json({
                     error: 'course_not_created',
                     message: 'An error occurred while creating the course'
                 })
+            })
+    }
+
+    // [PUT] /:id/delete - soft delete course 
+    delete(req, res) {
+        const deletedId = req.params.id;
+        courseData.findById(deletedId)
+            .then(deletedCourse => {
+                deletedCourse.deleted_at = new Date();
+                deletedCourse.save()
+                    .then((data) => res.status(204).json(data))
+                    .catch(err => {
+                        console.log(err);
+                        res.status(500).json({
+                            error: 'course_not_deleted',
+                            message: 'An error occurred while deleting the course'
+                        });
+                    })
+            })
+            .catch(err => {
+                console.log(err);
+                res.status(404).json({
+                    error: 'course_not_found',
+                    message: 'Cannot find the course'
+                });
             })
     }
 

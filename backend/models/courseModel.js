@@ -7,7 +7,8 @@ const courseModel = new mongoose.Schema({
     thumbnail: String,
     tags: [String], 
     creator: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-    lessons: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Lesson' }]
+    lessons: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Lesson' }],
+    deleted_at: { type: Date, default: null }
 }, {
     timestamps: true
 })
