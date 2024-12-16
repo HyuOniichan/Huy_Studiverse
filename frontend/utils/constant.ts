@@ -69,3 +69,14 @@ export const sidebarLinks = [
         icon: Course
     }, 
 ]
+
+export const dbCrudLinks = [
+    {
+        role: ['admin'], 
+        url: '/dashboard/courses/create', 
+        redirect: '/dashboard/courses', 
+        api: '',
+        label: 'create course'
+    }, 
+
+]

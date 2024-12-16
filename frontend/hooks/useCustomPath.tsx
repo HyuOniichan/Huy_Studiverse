@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { sidebarLinks } from '@/utils/constant'
+import { dbCrudLinks, sidebarLinks } from '@/utils/constant'
 import { useToastContext } from '@/components/Toast/ToastContext'
 import { usePathname } from 'next/navigation'
 
@@ -15,7 +15,7 @@ type pathType = {
 const useCustomPath = () => {
 
     const currentPathname = usePathname();
-    const [path, setPath] = useState<pathType | undefined>();
+    const [path, setPath] = useState<pathType>();
     const { addToast } = useToastContext();
 
     useEffect(() => {
@@ -23,8 +23,12 @@ const useCustomPath = () => {
         if (currentView) {
             const { icon, ...currentV } = currentView;
             setPath(currentV);
+        } else {
+            const crudView = dbCrudLinks.find(e => e.url === currentPathname); 
+            if (crudView) {
+                setPath(crudView); 
+            } else addToast('error', 'Cannot display current view');
         }
-        else addToast('error', 'Cannot display current view');
     }, [currentPathname])
 
     return path;
