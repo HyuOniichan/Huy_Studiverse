@@ -1,7 +1,7 @@
 'use client'
 
 import { navLinks } from '@/utils/constant'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import React, { useState } from 'react'
 import Logo from '../Home/Logo/Logo'
@@ -12,7 +12,8 @@ import { useToastContext } from '../Toast/ToastContext'
 const Nav = () => {
 
     const router = useRouter(); 
-    const currentPath = 'home';
+    const path = usePathname(); 
+    const currentPath = '/' + path.split('/')[1];
     const { currentUser, updateUser } = useAccountContext();
     const { addToast } = useToastContext();
     const [menu, setMenu] = useState(false);
@@ -115,7 +116,7 @@ const Nav = () => {
                     </div>
                     <div className="items-center justify-between hidden w-full md:flex md:w-auto md:order-1" id="navbar-default">
                         <ul className="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
-                            {navLinks.map(link => <Link key={link.id} href={link.url} className={(currentPath === link.label) ? 'nav__link--active' : 'nav__link'}>
+                            {navLinks.map(link => <Link key={link.id} href={link.url} className={(currentPath === link.url) ? 'nav__link--active' : 'nav__link'}>
                                 {link.label}
                             </Link>)}
                         </ul>
