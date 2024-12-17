@@ -22,6 +22,8 @@ export type CourseType = {
     tags: string[];
     creator: UserType; 
     lessons: LessonType[]; 
+    deleted_by: UserType, 
+    deleted_at: Date; 
     createdAt: Date;
     updatedAt: Date;
 }

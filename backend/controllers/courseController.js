@@ -18,6 +18,7 @@ class courseController {
         courseData.find({ deleted_at: { $ne: null } })
             .populate('lessons')
             .populate('creator')
+            .populate('deleted_by')
             .then(data => {
                 // check accessibility 
                 const filteredData = data.filter(e => {
@@ -50,7 +51,7 @@ class courseController {
 
     // [GET] /course/:id
     showOne(req, res) {
-        courseData.findById(req.params.id).populate('lessons').populate('creator')
+        courseData.findById(req.params.id).populate('lessons').populate('creator').populate('deleted_by')
             .then(data => {
                 // If course isn't deleted, show to everyone
                 if (data.deleted_at === null) {
