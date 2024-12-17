@@ -9,7 +9,8 @@ router.post(`/store`, authenticate, authRole([userRole.teacher, userRole.admin])
 router.patch(`/:id/delete`, authenticate, authRole([userRole.teacher, userRole.admin]), courseController.delete); 
 router.get(`/:id/lesson/:order`, authenticate, lessonController.showOneLesson); 
 router.get(`/:id/lesson`, authenticate, lessonController.showLessons); 
-router.get(`/:id`, courseController.showOne); 
+router.get(`/deleted`, authenticate, courseController.showDeleted); 
+router.get(`/:id`, authenticate, courseController.showOne); 
 router.get(`/`, courseController.show); 
 
 module.exports = router; 

@@ -73,7 +73,7 @@ class authController {
                     const accessToken = jwt.sign(
                         { userId: user._id, role: user.role },
                         process.env.ACCESS_TOKEN_SECRET,
-                        { expiresIn: '10m' }
+                        { expiresIn: '60m' }
                     )
                     res.cookie('jwt', accessToken, {
                         httpOnly: true,

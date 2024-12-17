@@ -5,7 +5,7 @@ const userData = require('../models/userModel')
 class courseController {
     // [GET] /course
     show(req, res) {
-        courseData.find({}).populate('lessons').populate('creator')
+        courseData.find({ deleted_at: null }).populate('lessons').populate('creator')
             .then(data => res.status(200).json(data))
             .catch(() => res.status(400).json({
                 error: 'courses_not_found',
@@ -13,10 +13,64 @@ class courseController {
             }))
     }
 
+    // [GET] /course/deleted
+    showDeleted(req, res) {
+        courseData.find({ deleted_at: { $ne: null } })
+            .populate('lessons')
+            .populate('creator')
+            .then(data => {
+                // check accessibility 
+                const filteredData = data.filter(e => {
+                    return (
+                        req.body.role === 'admin'
+                        || req.body.userId === e.creator._id.toString()
+                        || (deleted_by && req.body.userId === e.deleted_by.toString())
+                    )
+                })
+
+                if (filteredData.length > 0) {
+                    return res.status(200).json(filteredData);
+                }
+
+                // No courses accessible to user 
+                return res.status(403).json({
+                    error: 'no_access_to_deleted_courses',
+                    message: 'You do not have access to view deleted courses'
+                });
+
+            })
+            .catch(err => {
+                console.log(err);
+                res.status(400).json({
+                    error: 'courses_not_found',
+                    message: 'Cannot get courses'
+                })
+            })
+    }
+
     // [GET] /course/:id
     showOne(req, res) {
         courseData.findById(req.params.id).populate('lessons').populate('creator')
-            .then(data => res.status(200).json(data))
+            .then(data => {
+                // If course isn't deleted, show to everyone
+                if (data.deleted_at === null) {
+                    return res.status(200).json(data);
+                }
+
+                // If course is deleted, only show for admin & who created/deleted it
+                if (req.body.role === 'admin'
+                    || req.body.userId === data.creator._id.toString()
+                    || (deleted_by && req.body.userId === data.deleted_by.toString())
+                ) {
+                    return res.status(200).json(data)
+                }
+
+                // Dafault case (e.g. student try to access deleted course)
+                res.status(403).json({
+                    error: 'course_deleted',
+                    message: 'Course was deleted by admin or the owner of this course'
+                })
+            })
             .catch(() => {
                 res.status(400).json({
                     error: 'course_not_found',
