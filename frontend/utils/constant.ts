@@ -72,11 +72,17 @@ export const sidebarLinks = [
 
 export const dbCrudLinks = [
     {
-        role: ['admin'], 
+        role: ['admin', 'teacher'], 
         url: '/dashboard/courses/create', 
         redirect: '/dashboard/courses', 
         api: '',
         label: 'create course'
     }, 
-
+    {
+        role: ['admin', 'teacher'], 
+        url: '/dashboard/courses/trash', 
+        redirect: '/dashboard/courses', 
+        api: '',
+        label: 'Course trash'
+    }, 
 ]
