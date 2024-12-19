@@ -17,10 +17,16 @@ export async function apiRequest<T>(
             credentials: 'include'
         });
 
+        console.log(response)
+
         if (!response.ok) {
             const error = await response.json();
             throw new Error(error.message || 'Request failed');
         }
+
+        if (response.status === 204) {
+            return {} as T; 
+        } 
 
         return response.json();
     } catch(error: any) {

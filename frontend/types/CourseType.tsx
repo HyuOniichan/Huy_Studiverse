@@ -37,3 +37,11 @@ export type NewCourseType = {
     creator: string; 
     lessons: string[]; 
 }
+
+export type EditCourseType = {
+    title: string;
+    description: string;
+    price: string;
+    thumbnail: string;
+    tags: string[];
+}
