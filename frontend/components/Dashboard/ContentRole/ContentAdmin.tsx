@@ -1,9 +1,10 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useAccountContext } from '@/components/Account/AccountContext';
 import { UserType, CourseType } from '@/types';
 import useCustomPath from '@/hooks/useCustomPath';
+import { useToastContext } from '@/components/Toast/ToastContext';
 
 interface ContentAdminProps {
     currentData: (UserType | CourseType)[] | undefined;
@@ -12,8 +13,52 @@ interface ContentAdminProps {
 const ContentAdmin = ({ currentData }: ContentAdminProps) => {
 
     const { currentUser } = useAccountContext();
-    const customPath = useCustomPath(); 
-    const path = customPath?.label; 
+    const { addToast } = useToastContext();
+    const customPath = useCustomPath();
+    const path = customPath?.label;
+
+    // delete course function 
+    function handleDelete(courseId: string) {
+        
+        // check current user 
+        if (!(currentUser && currentUser._id)) {
+            addToast('error', 'Fail to authenticate');
+            return;
+        }
+
+        // style confirm modal later
+        if (!confirm('Are you sure to delete this?')) return;
+
+        const deletedBody = {
+            deleted_at: Date.now(),
+            deleted_by: currentUser?._id
+        }
+
+        fetch(`${process.env.NEXT_PUBLIC_BACKEND_LINK}/course/${courseId}/delete`, {
+            method: 'PATCH',
+            body: JSON.stringify(deletedBody),
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include'
+        })
+            .then(res => {
+                if (!res.ok) {
+                    return res.json().then(errorData => {
+                        throw new Error(errorData.message || 'An error occured');
+                    }).catch(err => {
+                        const errMessage = err instanceof Error ? err.message : 'An error occured';
+                        addToast('error', errMessage);
+                    })
+                }
+                addToast('success', 'Your course deleted');
+                // return res.json();
+            })
+            .catch(err => {
+                const errMessage = err instanceof Error ? err.message : 'An error occured';
+                addToast('error', errMessage);
+            })
+
+    }
+
 
     return (<>
         <table className="min-w-full divide-y divide-gray-200 table-fixed dark:divide-gray-600">
@@ -81,7 +126,12 @@ const ContentAdmin = ({ currentData }: ContentAdminProps) => {
                                 </svg>
                                 Edit {path === 'users' ? 'user' : 'course'}
                             </button>
-                            <button type="button" data-modal-toggle="delete-user-modal" className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-red-600 rounded-lg hover:bg-red-800 focus:ring-4 focus:ring-red-300 dark:focus:ring-red-900">
+                            <button
+                                type="button"
+                                data-modal-toggle="delete-user-modal"
+                                className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-red-600 rounded-lg hover:bg-red-800 focus:ring-4 focus:ring-red-300 dark:focus:ring-red-900"
+                                onClick={() => handleDelete(data._id)}
+                            >
                                 <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                                     <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd"></path>
                                 </svg>
