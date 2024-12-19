@@ -4,31 +4,22 @@ import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import { useToastContext } from '../Toast/ToastContext'
 import { CourseType } from '@/types'
+import { getCourses } from '@/services/api/courses'
 
 const CourseList = () => {
 
-    const toast = useToastContext();
+    const { addToast } = useToastContext();
     const [courses, setCourses] = useState<CourseType[] | null>(null);
-
+    
     useEffect(() => {
-        fetch(`${process.env.NEXT_PUBLIC_BACKEND_LINK}/course`, {
-            method: 'GET',
-            credentials: 'include'
-        })
-            .then(res => {
-                if (!res.ok) {
-                    res.json()
-                        .then((errorData: { error: string, message: string }) => {
-                            throw new Error(errorData.message || 'An error occured');
-                        })
-                        .catch(err => toast.addToast('error', err.message))
-                }
-                return res.json();
-            })
+        getCourses()
             .then(data => setCourses(data))
-            .catch((err: Error) => toast.addToast('error', err.message))
+            .catch(err => {
+                console.log(err);
+                const errMessage = err instanceof Error ? err.message : 'An error occured';
+                addToast('error', errMessage);
+            })
     }, [])
-
 
     return (
         <>

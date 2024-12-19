@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useToastContext } from '../Toast/ToastContext';
 import { redirect } from 'next/navigation';
 import { CourseType, LessonType } from '@/types';
+import { getDetailCourse } from '@/services/api/courses';
 
 const LessonDetail = () => {
 
@@ -30,24 +31,14 @@ const LessonDetail = () => {
     useEffect(() => {
         const url = window.location.pathname.split('/');
         setOrder(parseInt(url[4]));
+        const courseId = url[2]; 
+
         if (!currentUser) addToast('warning', 'Please log in to learn');
 
-        fetch(`${process.env.NEXT_PUBLIC_BACKEND_LINK}/course/${url[2]}`)
-            .then(res => {
-                if (!res.ok) {
-                    return res.json().then(errorData => {
-                        throw new Error(errorData.message || 'An error occured');
-                    }).catch(err => {
-                        const errMessage = err instanceof Error ? err.message : 'An error occured';
-                        addToast('error', errMessage);
-                    })
-                }
-                return res.json();
-            })
-            .then(data => {
-                setCourse(data)
-            })
+        getDetailCourse(courseId)
+            .then(data => setCourse(data))
             .catch(err => {
+                console.log(err); 
                 const errMessage = err instanceof Error ? err.message : 'An error occured';
                 addToast('error', errMessage);
             })

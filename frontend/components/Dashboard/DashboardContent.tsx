@@ -10,9 +10,7 @@ const DashboardContent = () => {
     const { currentUser } = useAccountContext();
     const allowedLinks = sidebarLinks
         .filter(sidebarLink => (currentUser && sidebarLink.role.includes(currentUser?.role)))
-
-    console.log(allowedLinks);
-
+        
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 mt-2">
             {allowedLinks.map((link, index) => (link.label !== 'dashboard') && (

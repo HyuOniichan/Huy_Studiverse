@@ -1,68 +1,37 @@
 'use client'
 
-import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import { useToastContext } from '../Toast/ToastContext'
-import { useAccountContext } from '../Account/AccountContext'
 import { CourseType } from '@/types'
+import { getDeletedCourses, patchRestoreCourse } from '@/services/api/courses'
 
 const CourseTrash = () => {
 
-    const { currentUser } = useAccountContext();
     const { addToast } = useToastContext();
     const [courses, setCourses] = useState<CourseType[] | null>(null);
 
     useEffect(() => {
-        fetch(`${process.env.NEXT_PUBLIC_BACKEND_LINK}/course/deleted`, {
-            method: 'GET',
-            credentials: 'include'
-        })
-            .then(res => {
-                if (!res.ok) {
-                    res.json()
-                        .then((errorData: { error: string, message: string }) => {
-                            throw new Error(errorData.message || 'An error occured');
-                        })
-                        .catch(err => addToast('error', err.message))
-                }
-                return res.json();
-            })
+        getDeletedCourses()
             .then(data => setCourses(data))
-            .catch((err: Error) => addToast('error', err.message))
+            .catch(err => {
+                console.log(err);
+                const errMessage = err instanceof Error ? err.message : 'An error occured';
+                addToast('error', errMessage);
+            })
     }, [])
 
     // restore function 
     function handleRestore(courseId: string) {
-
-        // check current user 
-        if (!(currentUser && currentUser._id)) {
-            addToast('error', 'Fail to authenticate');
-            return;
-        }
-
-        fetch(`${process.env.NEXT_PUBLIC_BACKEND_LINK}/course/${courseId}/restore`, {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include'
-        })
-            .then(res => {
-                if (!res.ok) {
-                    return res.json().then(errorData => {
-                        throw new Error(errorData.message || 'An error occured');
-                    }).catch(err => {
-                        const errMessage = err instanceof Error ? err.message : 'An error occured';
-                        addToast('error', errMessage);
-                    })
-                }
+        patchRestoreCourse(courseId)
+            .then(data => {
+                console.log(data);
                 addToast('success', 'Your course restored');
-                // return res.json();
             })
             .catch(err => {
                 console.log(err);
                 const errMessage = err instanceof Error ? err.message : 'An error occured';
                 addToast('error', errMessage);
             })
-
     }
 
 
@@ -125,9 +94,9 @@ const CourseTrash = () => {
                             </div>
                         </td>
                         <td className="p-4 space-x-2 whitespace-nowrap">
-                            <button 
-                                type="button" 
-                                data-modal-toggle="edit-user-modal" 
+                            <button
+                                type="button"
+                                data-modal-toggle="edit-user-modal"
                                 className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white rounded-lg bg-green-500 hover:bg-green-600 focus:ring-4 focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
                                 onClick={() => handleRestore(data._id)}
                             >

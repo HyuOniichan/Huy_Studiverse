@@ -27,3 +27,13 @@ export type CourseType = {
     createdAt: Date;
     updatedAt: Date;
 }
+
+export type NewCourseType = {
+    title: string;
+    description: string;
+    price: string;
+    thumbnail: string;
+    tags: string[];
+    creator: string; 
+    lessons: string[]; 
+}

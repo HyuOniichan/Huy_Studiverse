@@ -1,35 +1,14 @@
 'use client'
 
-import Link from 'next/link'
-import React, { useState, useEffect } from 'react'
-import { sidebarLinks } from '@/utils/constant'
-import Breadcrumb from '../base/Breadcrumb'
+import React, { useState } from 'react'
 import { useAccountContext } from '../Account/AccountContext'
 import { useToastContext } from '../Toast/ToastContext'
+import { postCreateCourse } from '@/services/api/courses'
 
 const CourseCreate = () => {
 
     const { currentUser } = useAccountContext();
     const { addToast } = useToastContext();
-
-    // get the path to render breadcrumb
-    const [path, setPath] = useState<string>('');
-
-    useEffect(() => {
-        const currentView = sidebarLinks.find(e => e.url === window.location.pathname);
-        if (currentView) setPath(currentView.label.toLowerCase());
-    })
-
-    const breadcrumbPaths = [
-        {
-            label: path || 'Courses',
-            url: '/dashboard/courses'
-        },
-        {
-            label: 'Create course',
-            url: '/dashboard/courses/create'
-        },
-    ]
 
     const [title, setTitle] = useState<string>('');
     const [desc, setDesc] = useState<string>('');
@@ -56,25 +35,13 @@ const CourseCreate = () => {
             lessons: []
         }
 
-        fetch(`${process.env.NEXT_PUBLIC_BACKEND_LINK}/course/store`, {
-            method: 'POST',
-            body: JSON.stringify(newCourse),
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include'
-        })
-            .then(res => {
-                if (!res.ok) {
-                    return res.json().then(errorData => {
-                        throw new Error(errorData.message || 'An error occured');
-                    }).catch(err => {
-                        const errMessage = err instanceof Error ? err.message : 'An error occured';
-                        addToast('error', errMessage);
-                    })
-                }
+        postCreateCourse(newCourse)
+            .then(data => {
                 addToast('success', 'Your course created');
-                return res.json();
+                // console.log(data); 
             })
             .catch(err => {
+                console.log(err);
                 const errMessage = err instanceof Error ? err.message : 'An error occured';
                 addToast('error', errMessage);
             })

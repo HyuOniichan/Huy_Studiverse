@@ -8,7 +8,7 @@ import { usePathname } from 'next/navigation'
 type pathType = {
     role: string[],
     url: string,
-    api: string,
+    api: string | (() => Promise<any>),
     label: string
 }
 

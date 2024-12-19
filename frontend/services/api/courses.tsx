@@ -1,6 +1,7 @@
 import { apiRequest } from ".";
 import { CourseType } from "@/types";
 import { getCurrentUser } from "./users";
+import { NewCourseType } from "@/types";
 
 const CourseApi = {
     index: '/course',
@@ -14,13 +15,16 @@ const CourseApi = {
 
 // GET 
 
-export const getCourses = () => apiRequest<CourseType[]>(CourseApi.index, { method: 'GET' });
+export const getCourses = (): Promise<CourseType[]> =>
+    apiRequest<CourseType[]>(CourseApi.index, { method: 'GET' });
 
-export const getDetailCourse = (courseId: string) => apiRequest<CourseType>(CourseApi.show(courseId), { method: 'GET' });
+export const getDetailCourse = (courseId: string): Promise<CourseType> =>
+    apiRequest<CourseType>(CourseApi.show(courseId), { method: 'GET' });
 
-export const getDeletedCourses = () => apiRequest<CourseType[]>(CourseApi.showDeleted, { method: 'GET' });
+export const getDeletedCourses = (): Promise<CourseType[]> =>
+    apiRequest<CourseType[]>(CourseApi.showDeleted, { method: 'GET' });
 
-export const getManagedCourses = async () => {
+export const getManagedCourses = async (): Promise<CourseType[]> => {
     try {
         const currentUser = await getCurrentUser();
         return currentUser?.created_courses || [];
@@ -30,7 +34,7 @@ export const getManagedCourses = async () => {
     }
 }
 
-export const getEnrolledCourses = async () => {
+export const getEnrolledCourses = async (): Promise<CourseType[]> => {
     try {
         const currentUser = await getCurrentUser();
         return currentUser?.enrolled_courses || [];
@@ -41,14 +45,18 @@ export const getEnrolledCourses = async () => {
 }
 
 
+// GET - lessons 
+
+
 // POST
 
-export const postCreateCourse = (data: CourseType) => apiRequest(CourseApi.store, { method: 'POST', body: data });
+export const postCreateCourse = (data: NewCourseType): Promise<void> => 
+    apiRequest(CourseApi.store, { method: 'POST', body: data });
 
 
 // PATCH
 
-export const patchDeleteCourse = async (courseId: string) => {
+export const patchDeleteCourse = async (courseId: string): Promise<void> => {
     try {
         const currentUser = await getCurrentUser();
 
@@ -71,7 +79,8 @@ export const patchDeleteCourse = async (courseId: string) => {
     }
 }
 
-export const patchRestoreCourse = async (courseId: string) => apiRequest(CourseApi.restore(courseId), { method: 'PATCH' })
+export const patchRestoreCourse = async (courseId: string): Promise<void> => 
+    apiRequest(CourseApi.restore(courseId), { method: 'PATCH' })
 
 
 // PUT

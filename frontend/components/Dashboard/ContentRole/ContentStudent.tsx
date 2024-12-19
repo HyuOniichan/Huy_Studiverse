@@ -1,20 +1,19 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { useAccountContext } from '@/components/Account/AccountContext';
-import { CourseType } from '@/types';
+import { CourseType, UserType } from '@/types';
 import useCustomPath from '@/hooks/useCustomPath';
 
-const ContentStudent = () => {
+interface ContentProps {
+    currentData: (UserType | CourseType)[] | undefined;
+}
+
+const ContentStudent = ({ currentData }: ContentProps) => {
 
     const { currentUser } = useAccountContext();
-    const [requestedCourses, setRequestedCourses] = useState<CourseType[] | undefined>();
     const customPath = useCustomPath();
     const path = customPath?.label;
-
-    useEffect(() => {
-        if (path === 'enrolled courses') setRequestedCourses(currentUser?.enrolled_courses);
-    }, [path])
 
     return (
         <>
@@ -42,7 +41,7 @@ const ContentStudent = () => {
                     </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
-                    {(requestedCourses && requestedCourses.length) ? requestedCourses.map((data, index) => (
+                    {(currentData && currentData.length) ? currentData.map((data, index) => (
                         <tr className="hover:bg-gray-100 dark:hover:bg-gray-700" key={index}>
                             <td className="w-4 p-4">
                                 <div className="flex items-center">
@@ -55,20 +54,20 @@ const ContentStudent = () => {
                             <td className="flex items-center p-4 mr-12 space-x-6 whitespace-nowrap">
                                 <img
                                     className='w-10 h-10 rounded-md'
-                                    src={data.thumbnail}
+                                    src={(data as CourseType).thumbnail}
                                     alt="Avatar"
                                 />
                                 <div className="text-sm font-normal text-gray-500 dark:text-gray-400">
                                     <div className="text-base font-semibold text-gray-900 dark:text-white">
-                                        {data.title}
+                                        {(data as CourseType).title}
                                     </div>
                                     <div className="text-sm font-normal text-gray-500 dark:text-gray-400">
-                                        {data.tags && data.tags.join(', ')}
+                                        {(data as CourseType).tags && (data as CourseType).tags.join(', ')}
                                     </div>
                                 </div>
                             </td>
                             <td className="p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white capitalize">
-                                {data.creator && data.creator.username}
+                                {(data as CourseType).creator && (data as CourseType).creator.username}
                             </td>
                             <td className="p-4 text-base font-normal text-gray-900 whitespace-nowrap dark:text-white">
                                 <div className="flex items-center">

@@ -2,6 +2,12 @@ import Course from "@/components/Icons/Course"
 import Dashboard from "@/components/Icons/Dashboard"
 import Products from "@/components/Icons/Products"
 import Users from "@/components/Icons/Users"
+import { 
+    getCourses, 
+    getEnrolledCourses, 
+    getManagedCourses 
+} from "@/services/api/courses"
+import { getAllUsers } from "@/services/api/users"
 
 export const navLinks = [
     {
@@ -43,28 +49,28 @@ export const sidebarLinks = [
     {
         role: ['admin'], 
         url: '/dashboard/users', 
-        api: '/user/all',
+        api: getAllUsers,
         label: 'users', 
         icon: Users
     }, 
     {
         role: ['admin'], 
         url: '/dashboard/courses', 
-        api: '/course',
+        api: getCourses,
         label: 'all courses', 
         icon: Course
     }, 
     {
         role: ['teacher'], 
         url: '/dashboard/courses/managed', 
-        api: '',
+        api: getManagedCourses,
         label: 'managed courses', 
         icon: Course
     }, 
     {
         role: ['teacher', 'student'], 
         url: '/dashboard/courses/enrolled', 
-        api: '',
+        api: getEnrolledCourses,
         label: 'enrolled courses', 
         icon: Course
     }, 

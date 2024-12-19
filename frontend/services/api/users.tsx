@@ -7,8 +7,8 @@ const UserApi = {
     showOne: (username: string) => `/user/${username}`
 }
 
-export const getCurrentUser = () => apiRequest<UserType>(UserApi.index, { method: 'GET' });
+export const getCurrentUser = (): Promise<UserType> => apiRequest<UserType>(UserApi.index, { method: 'GET' });
 
-export const getUser = (username: string) => apiRequest<UserType>(UserApi.showOne(username), { method: 'GET' });
+export const getUser = (username: string): Promise<UserType> => apiRequest<UserType>(UserApi.showOne(username), { method: 'GET' });
 
-export const getAllUsers = () => apiRequest<UserType[]>(UserApi.show, { method: 'GET' }); 
+export const getAllUsers = (): Promise<UserType[]> => apiRequest<UserType[]>(UserApi.show, { method: 'GET' }); 

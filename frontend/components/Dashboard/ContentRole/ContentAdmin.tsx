@@ -5,12 +5,13 @@ import { useAccountContext } from '@/components/Account/AccountContext';
 import { UserType, CourseType } from '@/types';
 import useCustomPath from '@/hooks/useCustomPath';
 import { useToastContext } from '@/components/Toast/ToastContext';
+import { patchDeleteCourse } from '@/services/api/courses';
 
-interface ContentAdminProps {
+interface ContentProps {
     currentData: (UserType | CourseType)[] | undefined;
 }
 
-const ContentAdmin = ({ currentData }: ContentAdminProps) => {
+const ContentAdmin = ({ currentData }: ContentProps) => {
 
     const { currentUser } = useAccountContext();
     const { addToast } = useToastContext();
@@ -29,34 +30,17 @@ const ContentAdmin = ({ currentData }: ContentAdminProps) => {
         // style confirm modal later
         if (!confirm('Are you sure to delete this?')) return;
 
-        const deletedBody = {
-            deleted_at: Date.now(),
-            deleted_by: currentUser?._id
-        }
-
-        fetch(`${process.env.NEXT_PUBLIC_BACKEND_LINK}/course/${courseId}/delete`, {
-            method: 'PATCH',
-            body: JSON.stringify(deletedBody),
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include'
-        })
-            .then(res => {
-                if (!res.ok) {
-                    return res.json().then(errorData => {
-                        throw new Error(errorData.message || 'An error occured');
-                    }).catch(err => {
-                        const errMessage = err instanceof Error ? err.message : 'An error occured';
-                        addToast('error', errMessage);
-                    })
-                }
+        // call api request
+        patchDeleteCourse(courseId)
+            .then(data => {
+                // console.log(data)
                 addToast('success', 'Your course deleted');
-                // return res.json();
             })
             .catch(err => {
+                console.log(err);
                 const errMessage = err instanceof Error ? err.message : 'An error occured';
                 addToast('error', errMessage);
-            })
-
+            })    
     }
 
 
