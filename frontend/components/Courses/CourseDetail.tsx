@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { RenderReviewStars } from '../Icons/Star'
 import { useToastContext } from '../Toast/ToastContext'
 import { CourseType } from '@/types'
+import { getDetailCourse } from '@/services/api/courses'
 
 const CourseDetail = () => {
 
@@ -19,28 +20,12 @@ const CourseDetail = () => {
     // get current path to fetch data
     useEffect(() => {
         const url = window.location.pathname.split('/');
-        const path = url[url.length - 1];
+        const courseId = url[url.length - 1];
 
-        fetch(`${process.env.NEXT_PUBLIC_BACKEND_LINK}/course/${path}`, {
-            method: 'GET',
-            credentials: 'include'
-        })
-            .then(res => {
-                if (!res.ok) {
-                    return res.json().then(errorData => {
-                        throw new Error(errorData.message || 'An error occured');
-                    }).catch(err => {
-                        const errMessage = err instanceof Error ? err.message : 'An error occured';
-                        addToast('error', errMessage);
-                    })
-                }
-                return res.json();
-            })
-            .then(data => {
-                console.log(data)
-                setCourse(data)
-            })
+        getDetailCourse(courseId)
+            .then(data => setCourse(data))
             .catch(err => {
+                console.log(err);
                 const errMessage = err instanceof Error ? err.message : 'An error occured';
                 addToast('error', errMessage);
             })

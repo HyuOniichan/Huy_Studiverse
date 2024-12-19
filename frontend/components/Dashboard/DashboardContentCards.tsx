@@ -4,7 +4,7 @@ import React from 'react'
 type DashboardContentCardsProps = {
     role: string[],
     url: string,
-    api: string,
+    api: string | (() => Promise<any>),
     label: string,
     icon: React.ElementType
 }
