@@ -190,7 +190,7 @@ class courseController {
         courseData.findById(req.params.id)
             .then(deletedCourse => {
 
-                if (req.body.userId !== 'admin' 
+                if (req.body.role !== 'admin' 
                     && req.body.userId !== deletedCourse.deleted_by.toString()
                 ) {
                     return res.status(403).json({

@@ -3,11 +3,13 @@
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import { useToastContext } from '../Toast/ToastContext'
+import { useAccountContext } from '../Account/AccountContext'
 import { CourseType } from '@/types'
 
 const CourseTrash = () => {
 
-    const toast = useToastContext();
+    const { currentUser } = useAccountContext();
+    const { addToast } = useToastContext();
     const [courses, setCourses] = useState<CourseType[] | null>(null);
 
     useEffect(() => {
@@ -21,13 +23,47 @@ const CourseTrash = () => {
                         .then((errorData: { error: string, message: string }) => {
                             throw new Error(errorData.message || 'An error occured');
                         })
-                        .catch(err => toast.addToast('error', err.message))
+                        .catch(err => addToast('error', err.message))
                 }
                 return res.json();
             })
             .then(data => setCourses(data))
-            .catch((err: Error) => toast.addToast('error', err.message))
+            .catch((err: Error) => addToast('error', err.message))
     }, [])
+
+    // restore function 
+    function handleRestore(courseId: string) {
+
+        // check current user 
+        if (!(currentUser && currentUser._id)) {
+            addToast('error', 'Fail to authenticate');
+            return;
+        }
+
+        fetch(`${process.env.NEXT_PUBLIC_BACKEND_LINK}/course/${courseId}/restore`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include'
+        })
+            .then(res => {
+                if (!res.ok) {
+                    return res.json().then(errorData => {
+                        throw new Error(errorData.message || 'An error occured');
+                    }).catch(err => {
+                        const errMessage = err instanceof Error ? err.message : 'An error occured';
+                        addToast('error', errMessage);
+                    })
+                }
+                addToast('success', 'Your course restored');
+                // return res.json();
+            })
+            .catch(err => {
+                console.log(err);
+                const errMessage = err instanceof Error ? err.message : 'An error occured';
+                addToast('error', errMessage);
+            })
+
+    }
 
 
     return (
@@ -89,7 +125,12 @@ const CourseTrash = () => {
                             </div>
                         </td>
                         <td className="p-4 space-x-2 whitespace-nowrap">
-                            <button type="button" data-modal-toggle="edit-user-modal" className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white rounded-lg bg-green-500 hover:bg-green-600 focus:ring-4 focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
+                            <button 
+                                type="button" 
+                                data-modal-toggle="edit-user-modal" 
+                                className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white rounded-lg bg-green-500 hover:bg-green-600 focus:ring-4 focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+                                onClick={() => handleRestore(data._id)}
+                            >
                                 <svg className="w-4 h-4 mr-2 mt-0.5" xmlns="http://www.w3.org/2000/svg" fill="#fff" viewBox="0 -960 960 960">
                                     <path d="M440-320h80v-166l64 62 56-56-160-160-160 160 56 56 64-62v166ZM280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520Zm-400 0v520-520Z" />
                                 </svg>
