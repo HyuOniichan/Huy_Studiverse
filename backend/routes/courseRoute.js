@@ -8,6 +8,7 @@ const { authenticate, userRole, authRole } = require('../middlewares/authenticat
 router.post(`/store`, authenticate, authRole([userRole.teacher, userRole.admin]), courseController.store); 
 router.patch(`/:id/delete`, authenticate, authRole([userRole.teacher, userRole.admin]), courseController.delete); 
 router.patch(`/:id/restore`, authenticate, authRole([userRole.teacher, userRole.admin]), courseController.restore); 
+router.patch(`/:id`, authenticate, authRole([userRole.teacher, userRole.admin]), courseController.update);
 router.get(`/:id/lesson/:order`, authenticate, lessonController.showOneLesson); 
 router.get(`/:id/lesson`, authenticate, lessonController.showLessons); 
 router.get(`/deleted`, authenticate, courseController.showDeleted); 

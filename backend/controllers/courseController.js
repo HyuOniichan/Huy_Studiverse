@@ -140,7 +140,7 @@ class courseController {
         courseData.findById(deletedId)
             .then(deletedCourse => {
 
-                if (req.body.role !== 'admin' 
+                if (req.body.role !== 'admin'
                     && req.body.userId !== deletedCourse.creator._id.toString()
                 ) {
                     return res.status(403).json({
@@ -148,7 +148,7 @@ class courseController {
                         message: 'You are not allowed to delete this course'
                     });
                 }
-                
+
                 if (req.body.deleted_at === null || req.body.deleted_by === null) {
                     return res.status(404).json({
                         error: 'missing_information',
@@ -190,7 +190,7 @@ class courseController {
         courseData.findById(req.params.id)
             .then(deletedCourse => {
 
-                if (req.body.role !== 'admin' 
+                if (req.body.role !== 'admin'
                     && req.body.userId !== deletedCourse.deleted_by.toString()
                 ) {
                     return res.status(403).json({
@@ -216,6 +216,52 @@ class courseController {
                         res.status(500).json({
                             error: 'course_not_restored',
                             message: 'An error occurred while restoring the course'
+                        });
+                    })
+            })
+            .catch(err => {
+                console.log(err);
+                res.status(404).json({
+                    error: 'course_not_found',
+                    message: 'Cannot find the course'
+                });
+            })
+    }
+
+    // [PATCH] /:id - edit course 
+    update(req, res) {
+        courseData.findById(req.params.id)
+            .then(editedCourse => {
+
+                if (req.body.role !== 'admin'
+                    && req.body.userId !== editedCourse.creator._id.toString()
+                ) {
+                    return res.status(403).json({
+                        error: 'unauthorized',
+                        message: 'You are not allowed to restore this course'
+                    });
+                }
+
+                if (editedCourse.deleted_at !== null) {
+                    return res.status(404).json({
+                        error: 'course_not_found',
+                        message: 'Course was deleted'
+                    });
+                }
+
+                editedCourse.title = req.body.title,
+                editedCourse.description = req.body.description,
+                editedCourse.price = req.body.price,
+                editedCourse.thumbnail = req.body.thumbnail,
+                editedCourse.tags = req.body.tags
+
+                editedCourse.save()
+                    .then((data) => res.status(204).json(data))
+                    .catch(err => {
+                        console.log(err);
+                        res.status(500).json({
+                            error: 'course_not_edited',
+                            message: 'An error occurred while editing the course'
                         });
                     })
             })

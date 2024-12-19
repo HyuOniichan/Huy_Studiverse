@@ -1,5 +1,5 @@
 import { apiRequest } from ".";
-import { CourseType } from "@/types";
+import { CourseType, EditCourseType } from "@/types";
 import { getCurrentUser } from "./users";
 import { NewCourseType } from "@/types";
 
@@ -9,7 +9,8 @@ const CourseApi = {
     showDeleted: '/course/deleted',
     store: '/course/store',
     delete: (courseId: string) => `/course/${courseId}/delete`,
-    restore: (courseId: string) => `/course/${courseId}/restore`
+    restore: (courseId: string) => `/course/${courseId}/restore`,
+    edit: (courseId: string) => `/course/${courseId}`
 }
 
 
@@ -50,7 +51,7 @@ export const getEnrolledCourses = async (): Promise<CourseType[]> => {
 
 // POST
 
-export const postCreateCourse = (data: NewCourseType): Promise<void> => 
+export const postCreateCourse = (data: NewCourseType): Promise<void> =>
     apiRequest(CourseApi.store, { method: 'POST', body: data });
 
 
@@ -79,8 +80,11 @@ export const patchDeleteCourse = async (courseId: string): Promise<void> => {
     }
 }
 
-export const patchRestoreCourse = async (courseId: string): Promise<void> => 
+export const patchRestoreCourse = (courseId: string): Promise<void> =>
     apiRequest(CourseApi.restore(courseId), { method: 'PATCH' })
+
+export const patchEditCourse = (courseId: string, data: EditCourseType): Promise<void> =>
+    apiRequest(CourseApi.edit(courseId), { method: 'PATCH', body: data });
 
 
 // PUT

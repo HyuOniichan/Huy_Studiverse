@@ -5,15 +5,28 @@ import React, { useState } from 'react'
 import { useAccountContext } from '../Account/AccountContext';
 import { dbCrudLinks } from '@/utils/constant';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 const HeaderActBtn = () => {
 
     const { currentUser } = useAccountContext();
     const path = useCustomPath();
-    // const currentPath = path?.url;
-    const currentPath = dbCrudLinks.find(e => {
-        if (e.url === path?.url) return e; 
-    })
+    const currentUrl = usePathname(); 
+
+    // Handle route for editing course: /course/:id/edit
+    const currentPath = (
+        dbCrudLinks.find(e => {
+            if (e.label === path?.label) return e;
+        })
+        || (currentUrl.split('/')[3] === 'edit' && {
+            role: [],
+            url: currentUrl.split('/')[3],
+            api: '',
+            label: 'Edit course', 
+            redirect: '/dashboard/courses'
+        })
+    )
+
 
     const isRender = (
         path?.label !== 'dashboard'
