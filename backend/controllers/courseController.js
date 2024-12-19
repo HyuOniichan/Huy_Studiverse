@@ -134,12 +134,38 @@ class courseController {
             })
     }
 
-    // [PUT] /:id/delete - soft delete course 
+    // [PATCH] /:id/delete - soft delete course 
     delete(req, res) {
         const deletedId = req.params.id;
         courseData.findById(deletedId)
             .then(deletedCourse => {
-                deletedCourse.deleted_at = new Date();
+
+                if (req.body.role !== 'admin' 
+                    && req.body.userId !== deletedCourse.creator._id.toString()
+                ) {
+                    return res.status(403).json({
+                        error: 'unauthorized',
+                        message: 'You are not allowed to delete this course'
+                    });
+                }
+                
+                if (req.body.deleted_at === null || req.body.deleted_by === null) {
+                    return res.status(404).json({
+                        error: 'missing_information',
+                        message: 'Missing required information'
+                    });
+                }
+
+                if (deletedCourse.deleted_at !== null) {
+                    return res.status(404).json({
+                        error: 'course_not_found',
+                        message: 'Course has already been in trash'
+                    });
+                }
+
+                deletedCourse.deleted_at = req.body.deleted_at;
+                deletedCourse.deleted_by = req.body.deleted_by;
+
                 deletedCourse.save()
                     .then((data) => res.status(204).json(data))
                     .catch(err => {
@@ -147,6 +173,49 @@ class courseController {
                         res.status(500).json({
                             error: 'course_not_deleted',
                             message: 'An error occurred while deleting the course'
+                        });
+                    })
+            })
+            .catch(err => {
+                console.log(err);
+                res.status(404).json({
+                    error: 'course_not_found',
+                    message: 'Cannot find the course'
+                });
+            })
+    }
+
+    // [PATCH] /:id/restore - restore course in trash 
+    restore(req, res) {
+        courseData.findById(req.params.id)
+            .then(deletedCourse => {
+
+                if (req.body.userId !== 'admin' 
+                    && req.body.userId !== deletedCourse.deleted_by.toString()
+                ) {
+                    return res.status(403).json({
+                        error: 'unauthorized',
+                        message: 'You are not allowed to restore this course'
+                    });
+                }
+
+                if (deletedCourse.deleted_at === null) {
+                    return res.status(404).json({
+                        error: 'course_not_found',
+                        message: 'Course has not been in trash'
+                    });
+                }
+
+                deletedCourse.deleted_at = null;
+                deletedCourse.deleted_by = null;
+
+                deletedCourse.save()
+                    .then((data) => res.status(204).json(data))
+                    .catch(err => {
+                        console.log(err);
+                        res.status(500).json({
+                            error: 'course_not_restored',
+                            message: 'An error occurred while restoring the course'
                         });
                     })
             })
