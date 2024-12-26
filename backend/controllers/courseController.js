@@ -4,7 +4,7 @@ const userData = require('../models/userModel')
 
 class courseController {
     // [GET] /course
-    show(req, res) {
+    index(req, res) {
         courseData.find({ deleted_at: null }).populate('lessons').populate('creator')
             .then(data => res.status(200).json(data))
             .catch(() => res.status(400).json({
@@ -50,7 +50,7 @@ class courseController {
     }
 
     // [GET] /course/:id
-    showOne(req, res) {
+    show(req, res) {
         courseData.findById(req.params.id).populate('lessons').populate('creator').populate('deleted_by')
             .then(data => {
                 // If course isn't deleted, show to everyone
@@ -94,8 +94,8 @@ class courseController {
 
         const newCourse = {
             title,
-            description: description || 'No description',
-            price: price || 'Free',
+            description: description || '...',
+            price: price || 'free',
             thumbnail: thumbnail || thumbnailPlacehoder,
             tags: tags || [],
             creator,
