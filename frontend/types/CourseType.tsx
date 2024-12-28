@@ -45,3 +45,12 @@ export type EditCourseType = {
     thumbnail: string;
     tags: string[];
 }
+
+export type NewLessonType = {
+    title: string;
+    description: string;
+    thumbnail: string; 
+    video_url: string; 
+    content: string; 
+    order: number; 
+}
