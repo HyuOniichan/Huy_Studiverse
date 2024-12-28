@@ -15,8 +15,8 @@ const CourseApi = {
 
 const LessonApi = {
     index: (courseId: string) => `/course/${courseId}/lesson`,
-    show: (courseId: string, order: number) => `/${courseId}/lesson/${order}`,
-    store: (courseId: string) => `/${courseId}/lesson/store`
+    show: (courseId: string, lessonId: string) => `/${courseId}/lesson/${lessonId}`,
+    store: (courseId: string) => `/course/${courseId}/lesson/store`
 }
 
 
@@ -57,8 +57,8 @@ export const getEnrolledCourses = async (): Promise<CourseType[]> => {
 export const getLessons = (courseId: string): Promise<LessonType[]> =>
     apiRequest(LessonApi.index(courseId), { method: 'GET' }); 
 
-export const getDetailLesson = (courseId: string, order: number): Promise<LessonType> =>
-    apiRequest(LessonApi.show(courseId, order), { method: 'GET' }); 
+export const getDetailLesson = (courseId: string, lessonId: string): Promise<LessonType> =>
+    apiRequest(LessonApi.show(courseId, lessonId), { method: 'GET' }); 
 
 
 // POST - courses 

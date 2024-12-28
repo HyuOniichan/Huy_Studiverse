@@ -13,17 +13,30 @@ const HeaderActBtn = () => {
     const path = useCustomPath();
     const currentUrl = usePathname(); 
 
-    // Handle route for editing course: /course/:id/edit
+    // Handle special routes: 
+    // + Editing course: /course/:id/edit
+    // + Create lesson: /course/:id/lesson/create
+
+    const urlArr = currentUrl.split('/'); 
+
     const currentPath = (
         dbCrudLinks.find(e => {
             if (e.label === path?.label) return e;
         })
-        || (currentUrl.split('/')[3] === 'edit' && {
+        || (urlArr[3] === 'edit' && {
             role: [],
-            url: currentUrl.split('/')[3],
+            url: urlArr[3],
             api: '',
             label: 'Edit course', 
             redirect: '/dashboard/courses'
+        })
+        || (urlArr[3] === 'lesson' && 
+            urlArr[4] === 'create' && {
+            role: [],
+            url: urlArr[3],
+            api: '',
+            label: 'Create lesson', 
+            redirect: `/courses/${urlArr[2]}/edit`
         })
     )
 

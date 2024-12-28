@@ -3,32 +3,36 @@
 import React, { useEffect, useState } from 'react'
 import { useAccountContext } from '../Account/AccountContext'
 import { useToastContext } from '../Toast/ToastContext'
-import { getDetailCourse, patchEditCourse, postCreateCourse } from '@/services/api/courses'
+import { getDetailCourse, patchEditCourse } from '@/services/api/courses'
 import { usePathname } from 'next/navigation'
+import { LessonType, NewLessonType } from '@/types'
+import Link from 'next/link'
 
 const CourseEdit = () => {
 
     const { currentUser } = useAccountContext();
     const { addToast } = useToastContext();
-    const currentUrl = usePathname(); 
-    const courseId = currentUrl.split('/')[2]; 
+    const currentUrl = usePathname();
+    const courseId = currentUrl.split('/')[2];
 
     const [title, setTitle] = useState<string>('');
     const [desc, setDesc] = useState<string>('');
     const [price, setPrice] = useState<string>('');
     const [thumbnail, setThumbnail] = useState<string>('');
     const [tags, setTags] = useState<string>('');
+    const [lessons, setLessons] = useState<LessonType[]>([]);
 
     // get current course data
     useEffect(() => {
         getDetailCourse(courseId)
             .then(data => {
                 // console.log(data); 
-                setTitle(data.title)
-                setDesc(data.description)
-                setPrice(data.price)
-                setThumbnail(data.thumbnail)
-                setTags(data.tags.join(', '))
+                setTitle(data.title);
+                setDesc(data.description);
+                setPrice(data.price);
+                setThumbnail(data.thumbnail);
+                setTags(data.tags.join(', '));
+                setLessons(data.lessons);
             })
             .catch(err => {
                 console.log(err);
@@ -37,11 +41,11 @@ const CourseEdit = () => {
             })
     }, [])
 
-    // send request to create new course
-    function handleEdit() {
+    // send request to edit course
+    function handleEditCourse() {
 
         if (!currentUser || !['teacher', 'admin'].includes(currentUser.role)) {
-            addToast('error', 'You are not allowed to create new course');
+            addToast('error', 'You are not allowed to edit course');
             return;
         }
 
@@ -102,10 +106,55 @@ const CourseEdit = () => {
                         placeholder="Seperated, by, commas" required
                     />
                 </div>
+                <div className="mb-5">
+                    <div className="flex flex-row justify-between align-center mb-2">
+                        <h4 className="block mb-2 text-lg font-medium text-gray-900 dark:text-white">Lessons</h4>
+                        <Link href={`/courses/${courseId}/lesson/create`} type="button" className="px-3 py-1 text-xs font-medium text-center inline-flex items-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                            <svg className="w-4 h-4 mr-1 -ml-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd"></path></svg>
+                            Add lesson
+                        </Link>
+                    </div>
+                    <div className="relative overflow-x-auto">
+                        <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                            <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                <tr>
+                                    <th scope="col" className="px-6 py-3">
+                                        Order
+                                    </th>
+                                    <th scope="col" className="px-6 py-3">
+                                        Title
+                                    </th>
+                                    <th scope="col" className="px-6 py-3">
+                                        Action
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {lessons.map((lesson, index) =>
+                                    <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                                        <td className="px-6 py-4">
+                                            {lesson.order}
+                                        </td>
+                                        <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                            {lesson.title}
+                                        </th>
+                                        <td className="px-6 py-4">
+                                            <Link
+                                                href={`/courses/${courseId}/lesson/${lesson._id}/edit`}
+                                                className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                                            >Edit</Link>
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
                 <button
                     type="button"
                     className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                    onClick={handleEdit}
+                    onClick={handleEditCourse}
                 >
                     Submit changes
                 </button>

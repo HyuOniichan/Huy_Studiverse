@@ -6,7 +6,13 @@ class lessonController {
     index(req, res) {
         if (req.params && req.params.id) {
             courseData.findById(req.params.id).populate('lessons')
-                .then(course => res.status(200).json(course.lessons))
+                .then(course => {
+                    // sort the lessons by 'order' field
+                    const [...lessons] = course.lessons;
+                    lessons.sort((a, b) => a.order - b.order);
+                    res.status(200).json(lessons);
+                    // res.status(200).json(course.lessons);
+                })
                 .catch(() => res.status(400).json({
                     error: 'lessons_not_found',
                     message: 'Cannot get lessons'
@@ -14,23 +20,23 @@ class lessonController {
         }
     }
 
-    // [GET] /course/:id/lesson/:order
+    // [GET] /course/:id/lesson/:lesson_id
     show(req, res) {
         if (req.params && req.params.id) {
             courseData.findById(req.params.id).populate('lessons')
                 .then(course => {
-                    const lesson = course.lessons.find(ls => ls.order == req.params.order);
+                    const lesson = course.lessons.find(ls => ls._id == req.params.lesson_id);
                     if (!lesson || lesson === null) throw new Error();
                     else return res.status(200).json(lesson);
                 })
                 .catch(() => res.status(400).json({
                     error: 'invalid_id',
-                    message: 'Cannot find requested course'
+                    message: 'Cannot find requested course or lesson'
                 }))
         }
     }
 
-    // [POST] /courses/:id/lesson
+    // [POST] /courses/:id/lesson/store
     store(req, res) {
         const { title, description, thumbnail, video_url, content, order } = req.body;
         const thumbnailPlacehoder = '/images/placeholder_image.png'
@@ -59,11 +65,11 @@ class lessonController {
                 lessonData.create(newLesson)
                     .then(createdLesson => {
                         // update lessons field of the course 
-                        course.lessons.push(createdLesson._id); 
+                        course.lessons.push(createdLesson._id);
                         course.save()
                             .then(() => res.status(201).json(createdLesson))
                             .catch(err => {
-                                console.log(err); 
+                                console.log(err);
                                 res.status(500).json({
                                     error: 'course_not_updated',
                                     message: 'Cannot update the course with new lesson'
@@ -85,6 +91,11 @@ class lessonController {
                     message: `${err}`
                 });
             })
+    }
+
+    // [PATCH] /course/:id/lesson/:lesson_id
+    update(req, res) {
+        res.json(req.body);
     }
 
 }
