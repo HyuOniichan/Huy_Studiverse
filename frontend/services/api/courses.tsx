@@ -1,5 +1,5 @@
 import { apiRequest } from ".";
-import { CourseType, EditCourseType } from "@/types";
+import { CourseType, EditCourseType, LessonType, NewLessonType } from "@/types";
 import { getCurrentUser } from "./users";
 import { NewCourseType } from "@/types";
 
@@ -13,8 +13,14 @@ const CourseApi = {
     edit: (courseId: string) => `/course/${courseId}`
 }
 
+const LessonApi = {
+    index: (courseId: string) => `/course/${courseId}/lesson`,
+    show: (courseId: string, order: number) => `/${courseId}/lesson/${order}`,
+    store: (courseId: string) => `/${courseId}/lesson/store`
+}
 
-// GET 
+
+// GET - courses
 
 export const getCourses = (): Promise<CourseType[]> =>
     apiRequest<CourseType[]>(CourseApi.index, { method: 'GET' });
@@ -48,11 +54,23 @@ export const getEnrolledCourses = async (): Promise<CourseType[]> => {
 
 // GET - lessons 
 
+export const getLessons = (courseId: string): Promise<LessonType[]> =>
+    apiRequest(LessonApi.index(courseId), { method: 'GET' }); 
 
-// POST
+export const getDetailLesson = (courseId: string, order: number): Promise<LessonType> =>
+    apiRequest(LessonApi.show(courseId, order), { method: 'GET' }); 
+
+
+// POST - courses 
 
 export const postCreateCourse = (data: NewCourseType): Promise<void> =>
     apiRequest(CourseApi.store, { method: 'POST', body: data });
+
+
+// POST - lessons 
+
+export const postCreateLesson = (courseId: string, data: NewLessonType): Promise<void> =>
+    apiRequest(LessonApi.store(courseId), { method: 'POST', body: data });
 
 
 // PATCH
