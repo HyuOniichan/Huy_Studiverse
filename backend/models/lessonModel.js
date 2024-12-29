@@ -8,6 +8,8 @@ const lessonModel = new mongoose.Schema({
     content: String, 
     course: { type: mongoose.Schema.Types.ObjectId, ref: 'Course' }, 
     order: Number, 
+    deleted_by: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null }, 
+    deleted_at: { type: Date, default: null }
 }, {
     timestamps: true
 })

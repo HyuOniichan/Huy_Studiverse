@@ -10,6 +10,8 @@ router.post(`/store`, authenticate, authRole([userRole.teacher, userRole.admin])
 router.post(`/:id/lesson/store`, authenticate, authRole([userRole.teacher, userRole.admin]), lessonController.store); 
 
 // PATCH
+router.patch(`/:id/lesson/:lesson_id/delete`, authenticate, authRole([userRole.teacher, userRole.admin]), lessonController.delete); 
+router.patch(`/:id/lesson/:lesson_id/restore`, authenticate, authRole([userRole.teacher, userRole.admin]), lessonController.restore); 
 router.patch(`/:id/lesson/:lesson_id`, authenticate, authRole([userRole.teacher, userRole.admin]), lessonController.update); 
 router.patch(`/:id/delete`, authenticate, authRole([userRole.teacher, userRole.admin]), courseController.delete); 
 router.patch(`/:id/restore`, authenticate, authRole([userRole.teacher, userRole.admin]), courseController.restore); 
