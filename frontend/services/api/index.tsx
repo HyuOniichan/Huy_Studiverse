@@ -17,8 +17,6 @@ export async function apiRequest<T>(
             credentials: 'include'
         });
 
-        console.log(response)
-
         if (!response.ok) {
             const error = await response.json();
             throw new Error(error.message || 'Request failed');

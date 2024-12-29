@@ -1,7 +1,9 @@
 import { apiRequest } from ".";
-import { CourseType, EditCourseType, LessonType, NewLessonType } from "@/types";
+import {
+    CourseType, NewCourseType, EditCourseType, 
+    LessonType, NewLessonType, EditLessonType,
+} from "@/types";
 import { getCurrentUser } from "./users";
-import { NewCourseType } from "@/types";
 
 const CourseApi = {
     index: '/course',
@@ -15,8 +17,12 @@ const CourseApi = {
 
 const LessonApi = {
     index: (courseId: string) => `/course/${courseId}/lesson`,
-    show: (courseId: string, lessonId: string) => `/${courseId}/lesson/${lessonId}`,
-    store: (courseId: string) => `/course/${courseId}/lesson/store`
+    show: (courseId: string, lessonId: string) => `/course/${courseId}/lesson/${lessonId}`,
+    showDeleted: (courseId: string) => `/course/${courseId}/lesson/deleted`,
+    store: (courseId: string) => `/course/${courseId}/lesson/store`, 
+    delete: (courseId: string, lessonId: string) => `/course/${courseId}/lesson/${lessonId}/delete`,
+    restore: (courseId: string, lessonId: string) => `/course/${courseId}/lesson/${lessonId}/restore`,
+    edit: (courseId: string, lessonId: string) => `/course/${courseId}/lesson/${lessonId}`
 }
 
 
@@ -57,6 +63,9 @@ export const getEnrolledCourses = async (): Promise<CourseType[]> => {
 export const getLessons = (courseId: string): Promise<LessonType[]> =>
     apiRequest(LessonApi.index(courseId), { method: 'GET' }); 
 
+export const getDeletedLessons = (courseId: string): Promise<LessonType[]> =>
+    apiRequest(LessonApi.showDeleted(courseId), { method: 'GET' }); 
+
 export const getDetailLesson = (courseId: string, lessonId: string): Promise<LessonType> =>
     apiRequest(LessonApi.show(courseId, lessonId), { method: 'GET' }); 
 
@@ -73,7 +82,7 @@ export const postCreateLesson = (courseId: string, data: NewLessonType): Promise
     apiRequest(LessonApi.store(courseId), { method: 'POST', body: data });
 
 
-// PATCH
+// PATCH - courses 
 
 export const patchDeleteCourse = async (courseId: string): Promise<void> => {
     try {
@@ -103,6 +112,38 @@ export const patchRestoreCourse = (courseId: string): Promise<void> =>
 
 export const patchEditCourse = (courseId: string, data: EditCourseType): Promise<void> =>
     apiRequest(CourseApi.edit(courseId), { method: 'PATCH', body: data });
+
+
+// PATCH - lessons 
+
+export const patchDeleteLesson = async (courseId: string, lessonId: string): Promise<void> => {
+    try {
+        const currentUser = await getCurrentUser();
+
+        if (!currentUser || !currentUser._id) {
+            throw new Error('Fail to authenticate');
+        }
+
+        const deletedData = {
+            deleted_at: Date.now(),
+            deleted_by: currentUser._id
+        }
+
+        await apiRequest<void>(LessonApi.delete(courseId, lessonId), {
+            method: 'PATCH',
+            body: deletedData
+        })
+    } catch (error) {
+        console.error('Fail to delete lesson: ', error);
+        throw error;
+    }
+}
+
+export const patchRestoreLesson = (courseId: string, lessonId: string): Promise<void> =>
+    apiRequest(LessonApi.restore(courseId, lessonId), { method: 'PATCH' })
+
+export const patchEditLesson = (courseId: string, lessonId: string, data: EditLessonType): Promise<void> =>
+    apiRequest(LessonApi.edit(courseId, lessonId), { method: 'PATCH', body: data });
 
 
 // PUT

@@ -3,9 +3,9 @@
 import React, { useEffect, useState } from 'react'
 import { useAccountContext } from '../Account/AccountContext'
 import { useToastContext } from '../Toast/ToastContext'
-import { getDetailCourse, patchEditCourse } from '@/services/api/courses'
+import { getDetailCourse, patchDeleteLesson, patchEditCourse, patchRestoreLesson } from '@/services/api/courses'
 import { usePathname } from 'next/navigation'
-import { LessonType, NewLessonType } from '@/types'
+import { LessonType } from '@/types'
 import Link from 'next/link'
 
 const CourseEdit = () => {
@@ -68,6 +68,56 @@ const CourseEdit = () => {
                 const errMessage = err instanceof Error ? err.message : 'An error occured';
                 addToast('error', errMessage);
             })
+    }
+
+    // handle delete lesson 
+    function handleDeleteLesson(lessonId: string) {
+
+        if (!currentUser || !['teacher', 'admin'].includes(currentUser.role)) {
+            addToast('error', 'You are not allowed to edit course');
+            return;
+        }
+
+        if (!confirm('Are you sure to delete this lesson?')) return;
+
+        // call api request
+        patchDeleteLesson(courseId, lessonId)
+            .then(data => {
+                // console.log(data)
+                toggleDeleteLesson(lessonId, true); 
+                addToast('success', 'Your lesson deleted');
+            })
+            .catch(err => {
+                console.log(err);
+                const errMessage = err instanceof Error ? err.message : 'An error occured';
+                addToast('error', errMessage);
+            })
+    }
+
+    // restore lesson 
+    function handleRestoreLesson(lessonId: string) {
+        patchRestoreLesson(courseId, lessonId)
+            .then(data => {
+                // console.log(data)
+                toggleDeleteLesson(lessonId, false); 
+                addToast('success', 'Your lesson restored');
+            })
+            .catch(err => {
+                console.log(err);
+                const errMessage = err instanceof Error ? err.message : 'An error occured';
+                addToast('error', errMessage);
+            })
+    }
+
+    // update UI after delete/restore lesson 
+    function toggleDeleteLesson(lessonId: string, deleted: boolean) {
+        const deletedAt = (deleted)? new Date() : null; 
+        setLessons((prev: LessonType[]) => prev.map((lesson: LessonType) => {
+            if (lesson._id === lessonId) {
+                return { ...lesson, deleted_at: deletedAt };
+            }
+            return lesson;
+        }));
     }
 
     return (
@@ -138,11 +188,28 @@ const CourseEdit = () => {
                                         <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                             {lesson.title}
                                         </th>
-                                        <td className="px-6 py-4">
-                                            <Link
+                                        <td className="px-6 py-4 flex flex-row gap-4">
+                                            {(lesson.deleted_at === null) && (<Link
                                                 href={`/courses/${courseId}/lesson/${lesson._id}/edit`}
                                                 className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                                            >Edit</Link>
+                                            >
+                                                Edit
+                                            </Link>)}
+                                            {(lesson.deleted_at !== null) ? (
+                                                <p
+                                                    className="font-medium text-green-600 dark:text-green-500 hover:underline hover:cursor-pointer"
+                                                    onClick={() => handleRestoreLesson(lesson._id)}
+                                                >
+                                                    Restore
+                                                </p>
+                                            ) : (
+                                                <p
+                                                    className="font-medium text-red-600 dark:text-red-500 hover:underline hover:cursor-pointer"
+                                                    onClick={() => handleDeleteLesson(lesson._id)}
+                                                >
+                                                    Delete
+                                                </p>
+                                            )}
                                         </td>
                                     </tr>
                                 )}

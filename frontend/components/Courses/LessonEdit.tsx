@@ -1,17 +1,20 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useAccountContext } from '../Account/AccountContext'
 import { useToastContext } from '../Toast/ToastContext'
-import { postCreateLesson } from '@/services/api/courses'
+import { getDetailLesson, patchEditCourse, patchEditLesson } from '@/services/api/courses'
 import { usePathname } from 'next/navigation'
+import { LessonType, NewLessonType } from '@/types'
+import Link from 'next/link'
 
-const LessonCreate = () => {
+const LessonEdit = () => {
 
     const { currentUser } = useAccountContext();
     const { addToast } = useToastContext();
-    const pathname = usePathname(); 
-    const courseId = pathname.split('/')[2];
+    const currentUrl = usePathname();
+    const courseId = currentUrl.split('/')[2];
+    const lessonId = currentUrl.split('/')[4];
 
     const [title, setTitle] = useState<string>('');
     const [desc, setDesc] = useState<string>('');
@@ -20,11 +23,30 @@ const LessonCreate = () => {
     const [content, setContent] = useState<string>('');
     const [order, setOrder] = useState<string>('1');
 
-    // send request to create new course
-    function handleSubmit() {
+    // get current course data
+    useEffect(() => {
+        getDetailLesson(courseId, lessonId)
+            .then(data => {
+                // console.log(data); 
+                setTitle(data.title)
+                setDesc(data.description)
+                setThumbnail(data.thumbnail)
+                setVid(data.video_url)
+                setContent(data.content)
+                setOrder(`${data.order}`)
+            })
+            .catch(err => {
+                console.log(err);
+                const errMessage = err instanceof Error ? err.message : 'An error occured';
+                addToast('error', errMessage);
+            })
+    }, [])
+
+    // send request to edit lesson
+    function handleEditLesson() {
 
         if (!currentUser || !['teacher', 'admin'].includes(currentUser.role)) {
-            addToast('error', 'You are not allowed to create new course');
+            addToast('error', 'You are not allowed to edit course');
             return;
         }
 
@@ -34,17 +56,17 @@ const LessonCreate = () => {
         }
 
         const newLesson = {
-            title, 
-            description: desc, 
-            thumbnail, 
-            video_url: vid, 
-            content, 
+            title,
+            description: desc,
+            thumbnail,
+            video_url: vid,
+            content,
             order: Number(order)
         }
 
-        postCreateLesson(courseId, newLesson)
+        patchEditLesson(courseId, lessonId, newLesson)
             .then(data => {
-                addToast('success', 'Your lesson created');
+                addToast('success', 'Your lesson edited');
                 // console.log(data); 
             })
             .catch(err => {
@@ -57,7 +79,7 @@ const LessonCreate = () => {
     return (
         <div className="mt-4">
             <form className="max-w ml-8">
-                <div className="mb-5">
+            <div className="mb-5">
                     <label htmlFor="title" className="block mb-2 text-lg font-medium text-gray-900 dark:text-white">Title</label>
                     <input value={title} onChange={e => setTitle(e.target.value)} type="text" id="title"
                         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -95,16 +117,17 @@ const LessonCreate = () => {
                         placeholder="Video URL" required
                     />
                 </div>
+
                 <button
                     type="button"
                     className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                    onClick={handleSubmit}
+                    onClick={handleEditLesson}
                 >
-                    Submit
+                    Submit changes
                 </button>
             </form>
         </div>
     )
 }
 
-export default LessonCreate
+export default LessonEdit

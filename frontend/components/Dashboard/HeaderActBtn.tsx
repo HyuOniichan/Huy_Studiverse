@@ -12,12 +12,12 @@ const HeaderActBtn = () => {
     const { currentUser } = useAccountContext();
     const path = useCustomPath();
     const currentUrl = usePathname(); 
+    const urlArr = currentUrl.split('/'); 
 
     // Handle special routes: 
     // + Editing course: /course/:id/edit
     // + Create lesson: /course/:id/lesson/create
-
-    const urlArr = currentUrl.split('/'); 
+    // + Edit lesson: /course/:id/lesson/:lesson_id/edit
 
     const currentPath = (
         dbCrudLinks.find(e => {
@@ -33,13 +33,20 @@ const HeaderActBtn = () => {
         || (urlArr[3] === 'lesson' && 
             urlArr[4] === 'create' && {
             role: [],
-            url: urlArr[3],
+            url: urlArr[4],
             api: '',
             label: 'Create lesson', 
             redirect: `/courses/${urlArr[2]}/edit`
         })
+        || (urlArr[3] === 'lesson' && 
+            urlArr[5] === 'edit' && {
+            role: [],
+            url: urlArr[5],
+            api: '',
+            label: 'Edit lesson', 
+            redirect: `/courses/${urlArr[2]}/edit`
+        })
     )
-
 
     const isRender = (
         path?.label !== 'dashboard'
