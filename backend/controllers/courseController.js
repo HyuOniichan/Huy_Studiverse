@@ -238,7 +238,7 @@ class courseController {
                 ) {
                     return res.status(403).json({
                         error: 'unauthorized',
-                        message: 'You are not allowed to restore this course'
+                        message: 'You are not allowed to update this course'
                     });
                 }
 
