@@ -25,7 +25,7 @@ class courseController {
                     return (
                         req.body.role === 'admin'
                         || req.body.userId === e.creator._id.toString()
-                        || (deleted_by && req.body.userId === e.deleted_by.toString())
+                        || (e.deleted_by && req.body.userId === e.deleted_by.toString())
                     )
                 })
 
@@ -53,24 +53,31 @@ class courseController {
     show(req, res) {
         courseData.findById(req.params.id).populate('lessons').populate('creator').populate('deleted_by')
             .then(data => {
-                // If course isn't deleted, show to everyone
-                if (data.deleted_at === null) {
-                    return res.status(200).json(data);
-                }
 
-                // If course is deleted, only show for admin & who created/deleted it
+                // If course is deleted, only show for admin & who created/deleted it (include deleted lessons)
                 if (req.body.role === 'admin'
                     || req.body.userId === data.creator._id.toString()
-                    || (deleted_by && req.body.userId === data.deleted_by.toString())
+                    || (data.deleted_by && req.body.userId === data.deleted_by.toString())
                 ) {
                     return res.status(200).json(data)
                 }
 
-                // Dafault case (e.g. student try to access deleted course)
-                res.status(403).json({
-                    error: 'course_deleted',
-                    message: 'Course was deleted by admin or the owner of this course'
-                })
+                // Default case (e.g. student try to access deleted course)
+                if (data.deleted_at !== null) {
+                    return res.status(403).json({
+                        error: 'course_deleted',
+                        message: 'Course was deleted by admin or the owner of this course'
+                    })
+                }
+
+                // If course is not deleted, show for everyone 
+                // Get available lessons (not deleted)
+                let filteredCourse = data; 
+                if (data.lessons) {
+                    filteredCourse.lessons = data.lessons.filter(lesson => lesson.deleted_at === null);
+                }
+
+                return res.status(200).json(filteredCourse);
             })
             .catch(() => {
                 res.status(400).json({

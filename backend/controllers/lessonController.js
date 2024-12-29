@@ -4,20 +4,22 @@ const lessonData = require('../models/lessonModel')
 class lessonController {
     // [GET] /course/:id/lesson - find course by :id and get all lessons
     index(req, res) {
-        if (req.params && req.params.id) {
-            courseData.findById(req.params.id).populate('lessons')
-                .then(course => {
-                    // sort the lessons by 'order' field
-                    const [...lessons] = course.lessons;
-                    lessons.sort((a, b) => a.order - b.order);
-                    res.status(200).json(lessons);
-                    // res.status(200).json(course.lessons);
-                })
-                .catch(() => res.status(400).json({
-                    error: 'lessons_not_found',
-                    message: 'Cannot get lessons'
-                }))
-        }
+        courseData.findById(req.params.id).populate('lessons')
+            .then(course => {
+                const [...allLessons] = course.lessons;
+
+                // get available lessons 
+                const lessons = allLessons.filter(lesson => lesson.deleted_at === null);
+
+                // sort the lessons by 'order' field
+                lessons.sort((a, b) => a.order - b.order);
+
+                res.status(200).json(lessons);
+            })
+            .catch(() => res.status(404).json({
+                error: 'lessons_not_found',
+                message: 'Cannot get lessons'
+            }))
     }
 
     // [GET] /course/:id/lesson/:lesson_id
@@ -26,11 +28,37 @@ class lessonController {
             .then(course => {
                 const lesson = course.lessons.find(ls => ls._id == req.params.lesson_id);
                 if (!lesson || lesson === null) throw new Error();
-                else return res.status(200).json(lesson);
+                else if (req.body.role === 'admin'
+                    || req.body.userId === course.creator._id.toString()
+                    || (lesson.deleted_by && req.body.userId === lesson.deleted_by.toString())
+                ) {
+                    return res.status(200).json(lesson)
+                }
+                res.status(403).json({
+                    error: 'lesson_deleted',
+                    message: 'Lesson was deleted by admin or the owner of this lesson'
+                })
             })
             .catch(() => res.status(400).json({
                 error: 'invalid_id',
-                message: 'Cannot find requested course or lesson'
+                message: 'Cannot find the requested course or lesson'
+            }))
+    }
+
+    // [GET] /course/:id/lesson/deleted
+    showDeleted(req, res) {
+        courseData.findById(req.params.id).populate('lessons')
+            .then(course => {
+                const [...allLessons] = course.lessons;
+
+                // get lessons in trash
+                const lessons = allLessons.filter(lesson => lesson.deleted_at !== null);
+
+                res.status(200).json(lessons);
+            })
+            .catch(() => res.status(404).json({
+                error: 'lessons_not_found',
+                message: 'Cannot get lessons'
             }))
     }
 

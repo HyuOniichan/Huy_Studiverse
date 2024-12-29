@@ -19,6 +19,7 @@ router.patch(`/:id`, authenticate, authRole([userRole.teacher, userRole.admin]),
 
 // GET 
 router.get(`/deleted`, authenticate, courseController.showDeleted); 
+router.get(`/:id/lesson/deleted`, authenticate, lessonController.showDeleted); 
 router.get(`/:id/lesson/:lesson_id`, authenticate, lessonController.show); 
 router.get(`/:id/lesson`, authenticate, lessonController.index); 
 router.get(`/:id`, authenticate, courseController.show); 

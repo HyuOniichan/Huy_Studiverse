@@ -10,7 +10,6 @@ class userController {
             .then(data => {
                 if (data === null) throw new Error();
                 const { password, ...currentUser } = data.toObject();
-                console.log(currentUser);
                 return res.status(200).json(currentUser)
             })
             .catch(() => res.status(400).json({
