@@ -32,6 +32,13 @@ class enrollmentController {
             })
         }
 
+        if (req.body.role !== 'admin' && req.body.userId !== studentId) {
+            return res.status(403).json({
+                error: 'forbidden',
+                message: 'You are not allowed to see enrollment details of this student'
+            });
+        }
+
         enrollmentData.findOne({ course_id: courseId, student_id: studentId })
             .populate('course_id')
             .populate('student_id')
@@ -65,7 +72,7 @@ class enrollmentController {
                     // If the student is already enrolled in the course
                     return res.status(409).json({
                         error: 'already_enrolled',
-                        message: 'The student has already enrolled in this course.'
+                        message: 'You have already enrolled in this course.'
                     });
                 }
 
@@ -81,16 +88,15 @@ class enrollmentController {
 
                 enrollmentData.create(newEnroll)
                     .then(createdEnroll => {
-                        // Ensure the enrollment was successful
-                        if (studentId !== createdEnroll.student_id.toString())
-                            throw new Error('different student id');
-
                         // Add the new enrollment to the user's list of enrolled courses
                         userData.findByIdAndUpdate(
                             studentId,
                             { $push: { enrolled_courses: createdEnroll._id } }
                         )
-                            .then(() => res.status(201).json(createdEnroll))
+                            .then(updatedStudent => {
+                                if (!updatedStudent) throw new Error('user_not_found');
+                                res.status(201).json(createdEnroll); 
+                            })
                             .catch(err => {
                                 console.log(err);
                                 res.status(500).json({
@@ -215,10 +221,10 @@ class enrollmentController {
         enrollmentData.findOne({ course_id: courseId, student_id: studentId })
             .then(enrollData => {
 
-                if (req.body.progress) enrollData.progress = req.body.progress; 
-                if (req.body.completed_datetime) enrollData.completed_datetime = req.body.completed_datetime; 
-                if (req.body.deleted_by) enrollData.deleted_by = req.body.deleted_by; 
-                if (req.body.deleted_at) enrollData.deleted_at = req.body.deleted_at; 
+                if (req.body.progress) enrollData.progress = req.body.progress;
+                if (req.body.completed_datetime) enrollData.completed_datetime = req.body.completed_datetime;
+                if (req.body.deleted_by) enrollData.deleted_by = req.body.deleted_by;
+                if (req.body.deleted_at) enrollData.deleted_at = req.body.deleted_at;
 
                 enrollData.save()
                     .then(data => res.status(204).json(data))
@@ -242,7 +248,7 @@ class enrollmentController {
     // [PATCH] /enrollment/:course_id/:student_id/complete - mark a course as completed 
     updateComplete(req, res) {
 
-        const completedTime = req.body.completed_datetime; 
+        const completedTime = req.body.completed_datetime;
 
         if (!completedTime) {
             return res.status(404).json({

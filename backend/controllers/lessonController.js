@@ -1,20 +1,43 @@
 const courseData = require('../models/courseModel')
 const lessonData = require('../models/lessonModel')
+const enrollmentData = require('../models/enrollmentModel')
 
 class lessonController {
     // [GET] /course/:id/lesson - find course by :id and get all lessons
     index(req, res) {
         courseData.findById(req.params.id).populate('lessons')
             .then(course => {
-                const [...allLessons] = course.lessons;
 
-                // get available lessons 
-                const lessons = allLessons.filter(lesson => lesson.deleted_at === null);
+                enrollmentData.findOne({
+                    course_id: req.params.id,
+                    student_id: req.body.userId
+                })
+                    .then(data => {
 
-                // sort the lessons by 'order' field
-                lessons.sort((a, b) => a.order - b.order);
+                        // student can see the course's lessons only if they enrolled 
+                        if (req.body.role !== 'admin' && !data) return res.status(403).json({
+                            error: 'unauthorized',
+                            message: 'You have not enrolled the course'
+                        });
 
-                res.status(200).json(lessons);
+                        const [...allLessons] = course.lessons;
+
+                        // get available lessons 
+                        const lessons = allLessons.filter(lesson => lesson.deleted_at === null);
+
+                        // sort the lessons by 'order' field
+                        lessons.sort((a, b) => a.order - b.order);
+
+                        res.status(200).json(lessons);
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        res.status(400).json({
+                            error: 'enrollment_not_found',
+                            message: 'Cannot get the requested enrollment'
+                        })
+                    })
+
             })
             .catch(() => res.status(404).json({
                 error: 'lessons_not_found',
