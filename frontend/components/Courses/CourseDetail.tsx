@@ -7,11 +7,18 @@ import { RenderReviewStars } from '../Icons/Star'
 import { useToastContext } from '../Toast/ToastContext'
 import { CourseType } from '@/types'
 import { getDetailCourse } from '@/services/api/courses'
+import { usePathname } from 'next/navigation'
+import { useAccountContext } from '../Account/AccountContext'
+import { getDetailEnrollment, postCreateEnrollment } from '@/services/api/enrollment'
 
 const CourseDetail = () => {
 
     const { addToast } = useToastContext();
+    const { currentUser } = useAccountContext();
     const [course, setCourse] = useState<CourseType>();
+    const [enrollStatus, setEnrollStatus] = useState(false);
+    const url = usePathname();
+    const courseId = url.split('/')[2];
 
     // Update later
     const rate = 3;
@@ -19,9 +26,6 @@ const CourseDetail = () => {
 
     // get current path to fetch data
     useEffect(() => {
-        const url = window.location.pathname.split('/');
-        const courseId = url[url.length - 1];
-
         getDetailCourse(courseId)
             .then(data => setCourse(data))
             .catch(err => {
@@ -29,8 +33,41 @@ const CourseDetail = () => {
                 const errMessage = err instanceof Error ? err.message : 'An error occured';
                 addToast('error', errMessage);
             })
-    }, [])
+        if (currentUser) {
+            getDetailEnrollment(courseId, currentUser?._id)
+                .then(data => setEnrollStatus(!!data))
+                .catch(err => {
+                    console.log(err);
+                    const errMessage = err instanceof Error ? err.message : 'An error occured';
+                    addToast('error', errMessage);
+                })
+        }
+    }, [currentUser])
 
+    function handleEnrollCourse() {
+
+        if (!currentUser || currentUser === null) {
+            addToast('warning', 'Please login to learn this course');
+            return;
+        }
+
+        const newEnrollment = {
+            courseId,
+            studentId: currentUser._id
+        };
+
+        postCreateEnrollment(newEnrollment)
+            .then(data => {
+                setEnrollStatus(true); 
+                addToast('success', 'You enrolled the course successfully');
+            })
+            .catch(err => {
+                console.log(err);
+                const errMessage = err instanceof Error ? err.message : 'An error occured';
+                addToast('error', errMessage);
+            })
+    }
+    
     return (
         <div>
             <section className="py-10 lg:py-24 relative ">
@@ -73,8 +110,11 @@ const CourseDetail = () => {
 
                                 </button>
                                 <button
-                                    className="text-center w-full px-5 py-4 rounded-[100px] bg-indigo-600 flex items-center justify-center font-semibold text-lg text-white shadow-sm transition-all duration-500 hover:bg-indigo-700 hover:shadow-indigo-400">
-                                    Enroll Now
+                                    className={`${enrollStatus ? 'bg-indigo-400 ' : 'bg-indigo-600 hover:bg-indigo-700 hover:shadow-indigo-400 '} text-center w-full px-5 py-4 rounded-[100px] flex items-center justify-center font-semibold text-lg text-white shadow-sm transition-all duration-500`}
+                                    onClick={handleEnrollCourse}
+                                    disabled={enrollStatus}
+                                >
+                                    {enrollStatus? 'Enrolled' : 'Enroll Now'}
                                 </button>
                             </div>
                         </div>
@@ -121,12 +161,12 @@ const CourseDetail = () => {
                                         </div>
                                     </td>
                                     <td className="p-4 space-x-2 whitespace-nowrap">
-                                        <Link href={`/courses/${course._id}/lesson/${data.order}`} className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white rounded-lg bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                                        {enrollStatus && <Link href={`/courses/${course._id}/lesson/${data.order}`} className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white rounded-lg bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                                             <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                                                 <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"></path><path fillRule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clipRule="evenodd"></path>
                                             </svg>
                                             Learn
-                                        </Link>
+                                        </Link>}
                                     </td>
                                 </tr>
                             ))}
