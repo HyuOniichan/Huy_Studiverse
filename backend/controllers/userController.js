@@ -3,10 +3,9 @@ const userData = require('../models/userModel');
 class userController {
     // [GET] /user
     index(req, res) {
-        const populatedPaths = (req.body.role === 'student')? 
-            'enrolled_courses' : ['enrolled_courses', 'created_courses']
-        if (req.body && req.body.userId) userData.findById(req.body.userId)
-            .populate(populatedPaths)
+        userData.findById(req.body.userId)
+            .populate('enrolled_courses')
+            .populate('created_courses')
             .then(data => {
                 if (data === null) throw new Error();
                 const { password, ...currentUser } = data.toObject();
