@@ -91,7 +91,7 @@ class enrollmentController {
                         // Add the new enrollment to the user's list of enrolled courses
                         userData.findByIdAndUpdate(
                             studentId,
-                            { $push: { enrolled_courses: createdEnroll._id } }
+                            { $push: { enrolled_courses: courseId } }
                         )
                             .then(updatedStudent => {
                                 if (!updatedStudent) throw new Error('user_not_found');
