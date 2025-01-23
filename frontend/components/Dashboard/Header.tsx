@@ -2,7 +2,6 @@ import React from 'react'
 import Link from 'next/link';
 
 import Breadcrumb from '../base/Breadcrumb'
-import { useAccountContext } from '../Account/AccountContext';
 import HeaderActBtn from './HeaderActBtn';
 
 interface HeaderProps {
@@ -10,8 +9,6 @@ interface HeaderProps {
 }
 
 const Header = ({ path }: HeaderProps) => {
-
-    const { currentUser } = useAccountContext();
 
     return (
         <div className="p-4 bg-white block sm:flex items-center justify-between border-b border-gray-200 lg:mt-1.5 dark:bg-gray-800 dark:border-gray-700">

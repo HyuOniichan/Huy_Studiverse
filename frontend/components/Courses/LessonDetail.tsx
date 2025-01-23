@@ -5,7 +5,7 @@ import { useAccountContext } from '../Account/AccountContext';
 import Link from 'next/link';
 import { useToastContext } from '../Toast/ToastContext';
 import { redirect, usePathname } from 'next/navigation';
-import { CourseType, LessonType } from '@/types';
+import { LessonType } from '@/types';
 import { getDetailCourse, getLessons } from '@/services/api/courses';
 
 const LessonDetail = () => {

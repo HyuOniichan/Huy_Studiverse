@@ -43,9 +43,8 @@ const LessonCreate = () => {
         }
 
         postCreateLesson(courseId, newLesson)
-            .then(data => {
+            .then(() => {
                 addToast('success', 'Your lesson created');
-                // console.log(data); 
             })
             .catch(err => {
                 console.log(err);

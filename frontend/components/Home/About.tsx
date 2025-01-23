@@ -26,7 +26,7 @@ const About = () => {
                                         At Studiverse, we believe that learning should be a lifelong pursuit,
                                         not confined by traditional education systems. Our mission is to provide a flexible,
                                         accessible platform where learners can explore new topics, build new skills,
-                                        and expand their knowledge without limitations. Whether you're a student, professional,
+                                        and expand their knowledge without limitations. Whether you&apos;re a student, professional,
                                         or curious mind, Studiverse is here to support your learning journey.
                                     </p>
                                 </div>
@@ -69,7 +69,7 @@ const About = () => {
                                         </h2>
                                         <p
                                             className="text-gray-500 text-base font-normal leading-relaxed lg:text-start text-center">
-                                            Our achievement story is a testament to teamwork and perseverance. Together, we've
+                                            Our achievement story is a testament to teamwork and perseverance. Together, we&apos;ve
                                             overcome challenges, celebrated victories, and created a narrative of progress and
                                             success.</p>
                                     </div>

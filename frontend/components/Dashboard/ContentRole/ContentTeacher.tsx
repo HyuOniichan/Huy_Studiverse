@@ -88,7 +88,7 @@ const ContentTeacher = ({ currentData }: ContentProps) => {
                     )) : (
                         <tr className="hover:bg-gray-100 dark:hover:bg-gray-700">
                             <td></td>
-                            <td className="py-2">Find your favourite one and let's start!</td>
+                            <td className="py-2">Find your favourite one and let&apos;s start!</td>
                             <td></td><td></td><td></td><td></td>
                         </tr>
                     )}

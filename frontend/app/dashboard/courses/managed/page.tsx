@@ -5,7 +5,6 @@ import React from 'react'
 import Content from '@/components/Dashboard/Content'
 import useCustomPath from '@/hooks/useCustomPath'
 import { useAccountContext } from '@/components/Account/AccountContext';
-import { usePathname } from 'next/navigation';
 
 const DashboardPage = () => {
 

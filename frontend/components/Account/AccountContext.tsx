@@ -14,7 +14,7 @@ const AccountContext = createContext<AccountContextType | null>(null);
 export const AccountProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 
     const [currentUser, setCurrentUser] = useState<AccountType | null>(null);
-    const toast = useToastContext();
+    // const toast = useToastContext();
 
     useEffect(() => {
         fetch(`${process.env.NEXT_PUBLIC_BACKEND_LINK}/user`, {

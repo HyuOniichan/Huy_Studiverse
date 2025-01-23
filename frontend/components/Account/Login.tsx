@@ -115,7 +115,7 @@ const Login = () => {
                                     onClick={handleLogin}
                                 >Log in</button>
                                 <p className="text-sm font-light text-gray-500 dark:text-gray-400">
-                                    Don't have an account? <Link href="/account/register" className="font-medium text-blue-600 hover:underline dark:text-blue-500">Sign up</Link>
+                                    Don&apos;t have an account? <Link href="/account/register" className="font-medium text-blue-600 hover:underline dark:text-blue-500">Sign up</Link>
                                 </p>
                             </form>
                         </div>

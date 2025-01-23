@@ -3,10 +3,8 @@
 import React, { useEffect, useState } from 'react'
 import { useAccountContext } from '../Account/AccountContext'
 import { useToastContext } from '../Toast/ToastContext'
-import { getDetailLesson, patchEditCourse, patchEditLesson } from '@/services/api/courses'
+import { getDetailLesson, patchEditLesson } from '@/services/api/courses'
 import { usePathname } from 'next/navigation'
-import { LessonType, NewLessonType } from '@/types'
-import Link from 'next/link'
 
 const LessonEdit = () => {
 
@@ -65,9 +63,8 @@ const LessonEdit = () => {
         }
 
         patchEditLesson(courseId, lessonId, newLesson)
-            .then(data => {
+            .then(() => {
                 addToast('success', 'Your lesson edited');
-                // console.log(data); 
             })
             .catch(err => {
                 console.log(err);

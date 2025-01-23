@@ -59,9 +59,8 @@ const CourseEdit = () => {
         }
 
         patchEditCourse(courseId, newCourse)
-            .then(data => {
+            .then(() => {
                 addToast('success', 'Your course edited');
-                // console.log(data); 
             })
             .catch(err => {
                 console.log(err);
@@ -82,8 +81,7 @@ const CourseEdit = () => {
 
         // call api request
         patchDeleteLesson(courseId, lessonId)
-            .then(data => {
-                // console.log(data)
+            .then(() => {
                 toggleDeleteLesson(lessonId, true); 
                 addToast('success', 'Your lesson deleted');
             })
@@ -97,8 +95,7 @@ const CourseEdit = () => {
     // restore lesson 
     function handleRestoreLesson(lessonId: string) {
         patchRestoreLesson(courseId, lessonId)
-            .then(data => {
-                // console.log(data)
+            .then(() => {
                 toggleDeleteLesson(lessonId, false); 
                 addToast('success', 'Your lesson restored');
             })

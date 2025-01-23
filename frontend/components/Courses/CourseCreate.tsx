@@ -36,9 +36,8 @@ const CourseCreate = () => {
         }
 
         postCreateCourse(newCourse)
-            .then(data => {
+            .then(() => {
                 addToast('success', 'Your course created');
-                // console.log(data); 
             })
             .catch(err => {
                 console.log(err);

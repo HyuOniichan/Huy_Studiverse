@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { useAccountContext } from '@/components/Account/AccountContext';
 import { UserType, CourseType } from '@/types';
 import useCustomPath from '@/hooks/useCustomPath';
@@ -33,8 +33,7 @@ const ContentAdmin = ({ currentData }: ContentProps) => {
 
         // call api request
         patchDeleteCourse(courseId)
-            .then(data => {
-                // console.log(data)
+            .then(() => {
                 addToast('success', 'Your course deleted');
             })
             .catch(err => {

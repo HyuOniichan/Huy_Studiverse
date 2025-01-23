@@ -57,7 +57,7 @@ const CourseDetail = () => {
         };
 
         postCreateEnrollment(newEnrollment)
-            .then(data => {
+            .then(() => {
                 setEnrollStatus(true); 
                 addToast('success', 'You enrolled the course successfully');
             })

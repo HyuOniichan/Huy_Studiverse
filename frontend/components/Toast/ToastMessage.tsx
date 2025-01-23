@@ -15,6 +15,7 @@ const ToastMessage: React.FC<ToastMessageProps> = ({ id, type, message, duration
     const [visible, setVisible] = useState(true);
 
     useEffect(() => {
+        console.log("toast id: ", id); 
         const timer = setTimeout(() => setVisible(false), duration);
         return () => clearTimeout(timer);
     }, [])

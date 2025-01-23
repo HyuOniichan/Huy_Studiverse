@@ -1,10 +1,10 @@
 import Link from 'next/link'
 import React from 'react'
 
-type DashboardContentCardsProps = {
+type DashboardContentCardsProps<T = any> = {
     role: string[],
     url: string,
-    api: string | (() => Promise<any>),
+    api: string | (() => Promise<T>),
     label: string,
     icon: React.ElementType
 }
