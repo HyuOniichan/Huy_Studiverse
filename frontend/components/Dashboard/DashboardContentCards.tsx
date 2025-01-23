@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import React from 'react'
 
-type DashboardContentCardsProps<T = any> = {
+type DashboardContentCardsProps<T = unknown> = {
     role: string[],
     url: string,
     api: string | (() => Promise<T>),
