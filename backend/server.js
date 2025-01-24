@@ -16,7 +16,7 @@ app.use(cookieParser());
 
 const allowedOrigins = [
     "http://localhost:3000", 
-    "https://studiverse-server.onrender.com", 
+    "https://huy-studiverse.vercel.app", 
 ]
 app.use(cors({
     origin: (origin, callback) => {
