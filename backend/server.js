@@ -10,12 +10,22 @@ const route = require('./routes/');
 const startBackgroundJobs = require('./jobs'); 
 
 // middleware 
-app.use(express.json()); 
-app.use(cors({
-    credentials: true, 
-    origin: ['http://localhost:3000']
-})); 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser()); 
+
+const allowedOrigins = [
+    "http://localhost:3000", 
+    "https://studiverse-server.onrender.com", 
+]
+app.use(cors({
+    origin: (origin, callback) => {
+        if (!origin || allowedOrigins.includes(origin)) callback(null, true) 
+        else callback(new Error('Not allowed by CORS'), false) 
+    }, 
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], 
+    credentials: true, 
+})); 
 
 // routes
 route(app); 
