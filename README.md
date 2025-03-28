@@ -1,4 +1,4 @@
-# Wandering Words
+# Studiverse
 
 An e-learning web providing online courses.  
 Website: [huy-studiverse.vercel.app](https://huy-studiverse.vercel.app/)  
@@ -22,7 +22,7 @@ Teachers can create lessons, and admins can manage users and courses.
 
 **Tech Stack**
 + Frontend: React.js, Next.js, Tailwind CSS, TypeScript
-+ Backend: Node.js, Express.js, MongoDB  
++ Backend: Node.js, Express.js   
 + Database: MongoDB (MongoDB Atlas)
 + Authentication: JWT Tokens
 + Deployment: Vercel (client), Render (server) 
@@ -46,6 +46,5 @@ Teachers can create lessons, and admins can manage users and courses.
 ## Refer
 + Frontend: Flowbite  
 + Feature: F8, Coursera  
-+ Other supports: Youtube, Stackoverflow, ChatGPT, ... 
 
 
